@@ -72,9 +72,12 @@ function openDetail(item) {
 }
 
 // Paylaşım Kartını Aç
+// Paylaşım Kartını Aç
 function openShareCard(item) {
     const shareOverlay = document.getElementById('shareOverlay');
     const container = document.getElementById('shareCardContainer');
+    const hintText = document.querySelector('.share-hint');
+    const actionBtn = document.querySelector('.share-modal .btn-primary');
 
     // Rastgele hayvan ikonu veya tipi
     const animalName = item.features[0].match(/\((.*?)\)/)?.[1] || "Tip " + item.id;
@@ -93,10 +96,80 @@ function openShareCard(item) {
         </div>
     `;
 
+    // Metinleri ve butonu güncelle
+    if (hintText) hintText.innerText = "Aşağıdaki butona basarak paylaşabilirsin.";
+    if (actionBtn) {
+        actionBtn.innerText = "Resmi Paylaş 📲";
+        actionBtn.onclick = () => generateAndShareImage(item.title);
+    }
+
     shareOverlay.classList.add('active');
 
     // History'ye ekle
     window.history.pushState({ modal: 'share' }, '', '#share');
+}
+
+// Resmi Oluştur ve Paylaş
+async function generateAndShareImage(title) {
+    const container = document.getElementById('shareCardContainer');
+    const btn = document.querySelector('.share-modal .btn-primary');
+    const originalText = btn.innerText;
+
+    try {
+        btn.innerText = "Hazırlanıyor... 🎨";
+        btn.disabled = true;
+
+        // Html2Canvas ile görüntü al
+        const canvas = await html2canvas(container, {
+            useCORS: true,
+            scale: 2,
+            backgroundColor: null
+        });
+
+        // Canvas'ı Blob'a çevir
+        canvas.toBlob(async (blob) => {
+            if (!blob) {
+                alert("Görsel oluşturulamadı.");
+                btn.innerText = originalText;
+                btn.disabled = false;
+                return;
+            }
+
+            // Dosya oluştur
+            const file = new File([blob], "enneagram-sonuc.jpg", { type: "image/jpeg" });
+
+            // Paylaşımı başlat
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        files: [file]
+                    });
+                    btn.innerText = "Paylaşıldı! 🎉";
+                } catch (err) {
+                    // Kullanıcı iptal ettiyse sessiz kal
+                    btn.innerText = originalText;
+                }
+            } else {
+                // PC'de veya desteklenmeyen tarayıcıda indir
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = 'enneagram-sonuc.jpg';
+                link.click();
+                alert("Resmi indirdim!");
+                btn.innerText = "İndirildi ⬇️";
+            }
+
+            btn.disabled = false;
+            setTimeout(() => btn.innerText = originalText, 2000);
+
+        }, 'image/jpeg', 0.9);
+
+    } catch (error) {
+        console.error("Görsel hatası:", error);
+        alert("Bir hata oluştu");
+        btn.innerText = originalText;
+        btn.disabled = false;
+    }
 }
 
 function closeShareCard(fromHistory = false) {
