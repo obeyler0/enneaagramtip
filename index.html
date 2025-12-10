@@ -36,12 +36,12 @@
                 </button>
 
                 <button class="nav-btn" onclick="switchPage('test')">
-                    <!-- Test/Clipboard Icon -->
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
-                        <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
-                    </svg>
-                    <span>Test Yap</span>
+                    <span class="icon">📝</span>
+                    <span class="label">Test Yap</span>
+                </button>
+                <button class="nav-btn" onclick="switchPage('about')">
+                    <span class="icon">ℹ️</span>
+                    <span class="label">Nedir?</span>
                 </button>
             </div>
 
@@ -71,6 +71,56 @@
 
                 <div class="card-grid" id="cardGrid">
                     <!-- Kartlar JS ile buraya -->
+                </div>
+            </div>
+
+            <!-- SAYFA 3: NEDİR? (ABOUT) -->
+            <div id="about-page" class="page-view">
+                <div class="about-container">
+                    <header>
+                        <h1>Enneagram Nedir?</h1>
+                        <p class="subtitle">Kadim Bilgelik ve Modern Psikoloji</p>
+                    </header>
+
+                    <div class="about-content">
+                        <section>
+                            <p>Enneagram, insan kişiliğini <strong>9 farklı temel tip</strong> üzerinden açıklayan,
+                                kökenleri çok eskilere dayanan ancak modern psikolojiyle harmanlanmış güçlü bir kendini
+                                tanıma modelidir.</p>
+                            <p>Sadece davranışlarımızı değil, bu davranışların altındaki <strong>temel motivasyonları,
+                                    korkuları ve arzuları</strong> da ortaya çıkarır.</p>
+                        </section>
+
+                        <div class="centers-grid">
+                            <div class="center-card head">
+                                <div class="center-icon">🧠</div>
+                                <h3>Zihin Merkezi</h3>
+                                <p class="types">Tipler: 5, 6, 7</p>
+                                <p>Düşünce, analiz ve planlama odaklıdırlar. Temel duyguları <strong>korku</strong>dur.
+                                </p>
+                            </div>
+                            <div class="center-card heart">
+                                <div class="center-icon">❤️</div>
+                                <h3>Kalp Merkezi</h3>
+                                <p class="types">Tipler: 2, 3, 4</p>
+                                <p>Duygu, ilişki ve imaj odaklıdırlar. Temel duyguları <strong>utanç/imaj</strong>dır.
+                                </p>
+                            </div>
+                            <div class="center-card body">
+                                <div class="center-icon">💪</div>
+                                <h3>Beden Merkezi</h3>
+                                <p class="types">Tipler: 8, 9, 1</p>
+                                <p>İçgüdü, eylem ve kontrol odaklıdırlar. Temel duyguları <strong>öfke</strong>dir.</p>
+                            </div>
+                        </div>
+
+                        <section>
+                            <h3>Neden Önemli?</h3>
+                            <p>Enneagram sizi bir kalıba sokmaz, aksine içinde bulunduğunuz kalıpları fark etmenizi
+                                sağlar. Kendi "otomatik pilot" davranışlarınızı gördüğünüzde, onları yönetme ve
+                                dönüştürme şansı elde edersiniz.</p>
+                        </section>
+                    </div>
                 </div>
             </div>
 

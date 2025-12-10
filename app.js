@@ -204,9 +204,9 @@ function switchPage(pageName, fromHistory = false) {
     const buttons = document.querySelectorAll('.nav-btn');
     buttons.forEach(btn => btn.classList.remove('active'));
 
-    // Basit index kontrolü (0: Home, 1: Test)
     if (pageName === 'home') buttons[0].classList.add('active');
     if (pageName === 'test') buttons[1].classList.add('active');
+    if (pageName === 'about') buttons[2].classList.add('active');
 
     // 2. Update Views
     document.querySelectorAll('.page-view').forEach(view => {
@@ -215,14 +215,16 @@ function switchPage(pageName, fromHistory = false) {
 
     if (pageName === 'home') {
         document.getElementById('home-page').classList.add('active');
-        // Reset test view if needed? No, keep logic simple
     } else if (pageName === 'test') {
         document.getElementById('test-page').classList.add('active');
-        // Reset test UI to start
+    } else if (pageName === 'about') {
+        document.getElementById('about-page').classList.add('active');
+    }
+
+    // Test reset logic
+    if (pageName === 'test' && !fromHistory) {
         document.getElementById('quizStartView').style.display = 'block';
         document.getElementById('quizActiveView').style.display = 'none';
-
-        // Skorları ve current indexi sıfırlamak opsiyonel
         currentQuestionIndex = 0;
     }
 }

@@ -808,6 +808,75 @@ h1 {
     transform: scale(1.1);
 }
 
+/* --- ABOUT PAGE STYLES --- */
+.about-container {
+    padding: 0 20px 40px 20px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.about-content section {
+    margin-bottom: 40px;
+    line-height: 1.6;
+    color: #e2e8f0;
+    font-size: 1.1rem;
+}
+
+.about-content strong {
+    color: var(--text-primary);
+}
+
+.centers-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin: 40px 0;
+}
+
+.center-card {
+    background: rgba(30, 41, 59, 0.5);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 25px;
+    text-align: center;
+    transition: transform 0.3s, background 0.3s;
+}
+
+.center-card:hover {
+    transform: translateY(-5px);
+    background: rgba(30, 41, 59, 0.8);
+}
+
+.center-icon {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+}
+
+.center-card h3 {
+    margin-bottom: 10px;
+    color: white;
+    font-family: 'Outfit', sans-serif;
+}
+
+.center-card.head {
+    border-top: 4px solid #457B9D;
+}
+
+.center-card.heart {
+    border-top: 4px solid #E63946;
+}
+
+.center-card.body {
+    border-top: 4px solid #1D3557;
+}
+
+.types {
+    color: var(--accent);
+    font-weight: 700;
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+}
+
 /* --- FOOTER STYLES --- */
 .sidebar-footer-desktop {
     margin-top: auto;
