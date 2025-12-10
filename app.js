@@ -66,6 +66,9 @@ function openDetail(item) {
 
     // Modalı göster
     detailOverlay.classList.add('active');
+
+    // History'ye ekle (hash değişimi ile)
+    window.history.pushState({ modal: 'detail' }, '', '#detail');
 }
 
 // Paylaşım Kartını Aç
@@ -91,22 +94,39 @@ function openShareCard(item) {
     `;
 
     shareOverlay.classList.add('active');
+
+    // History'ye ekle
+    window.history.pushState({ modal: 'share' }, '', '#share');
 }
 
-function closeShareCard() {
-    document.getElementById('shareOverlay').classList.remove('active');
+function closeShareCard(fromHistory = false) {
+    const overlay = document.getElementById('shareOverlay');
+    if (overlay.classList.contains('active')) {
+        overlay.classList.remove('active');
+        // Eğer geri tuşundan değil de butondan kapatıldıysa, history'i geri al
+        if (!fromHistory) window.history.back();
+    }
 }
 
 // Detay Modalını Kapat
-function closeDetail() {
-    detailOverlay.classList.remove('active');
-    // Paylaş butonunu da temizle
-    const shareArea = document.getElementById('shareActionArea');
-    if (shareArea) shareArea.innerHTML = '';
+// Detay Modalını Kapat
+function closeDetail(fromHistory = false) {
+    if (detailOverlay.classList.contains('active')) {
+        detailOverlay.classList.remove('active');
+        const shareArea = document.getElementById('shareActionArea');
+        if (shareArea) shareArea.innerHTML = '';
+
+        // Eğer geri tuşundan değil de butondan kapatıldıysa, history'i geri al
+        if (!fromHistory) window.history.back();
+    }
 }
 
 // --- PAGE NAVIGATION ---
-function switchPage(pageName) {
+function switchPage(pageName, fromHistory = false) {
+    if (!fromHistory) {
+        window.history.pushState({ page: pageName }, '', '#' + pageName);
+    }
+
     // 1. Update Buttons
     const buttons = document.querySelectorAll('.nav-btn');
     buttons.forEach(btn => btn.classList.remove('active'));
@@ -438,4 +458,34 @@ function closeTest() {
 
 // Başlat
 // Başlat
-document.addEventListener('DOMContentLoaded', renderCards);
+document.addEventListener('DOMContentLoaded', () => {
+    renderCards();
+
+    // Uygulama yüklendiğinde Home state'i işle
+    window.history.replaceState({ page: 'home' }, '', '#home');
+
+    // --- GERİ TUŞU YÖNETİMİ (GLOBAL) ---
+    window.onpopstate = function (event) {
+        // 1. Share Modal Açıksa?
+        const shareOverlay = document.getElementById('shareOverlay');
+        if (shareOverlay.classList.contains('active')) {
+            closeShareCard(true); // true = history'den geldi, tekrar back yapma
+            return;
+        }
+
+        // 2. Detay Açıksa?
+        const detailOverlay = document.getElementById('detailOverlay');
+        if (detailOverlay.classList.contains('active')) {
+            closeDetail(true);
+            return;
+        }
+
+        // 3. Sayfa Geçişi
+        if (event.state && event.state.page) {
+            switchPage(event.state.page, true);
+        } else {
+            // State yoksa varsayılan home
+            switchPage('home', true);
+        }
+    };
+});
