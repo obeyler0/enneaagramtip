@@ -62,17 +62,24 @@ body {
 }
 
 .logo {
-    font-family: 'Outfit', sans-serif;
-    font-weight: 700;
-    font-size: 1.5rem;
-    color: var(--accent);
-    background: rgba(99, 102, 241, 0.1);
-    width: 40px;
-    height: 40px;
+    width: 60px;
+    height: 60px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 12px;
+    background: transparent;
+}
+
+.app-logo {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 0 10px rgba(99, 102, 241, 0.5));
+    transition: transform 0.5s ease;
+}
+
+.app-logo:hover {
+    transform: rotate(360deg);
 }
 
 .nav-links {
