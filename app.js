@@ -60,10 +60,45 @@ function startTest() {
 
 // ... (renderQuestion, selectLikertOption vs. aynı kalıyor, değiştirmeye gerek yok)
 
-// Detay Modalını Aç (ZENGİNLEŞTİRİLMİŞ VERSİYON)
+// Yardımcı Fonksiyon: Rastgele Öğe Seç
+function getRandomItem(arr) {
+    if (!arr || arr.length === 0) return null;
+    return arr[Math.floor(Math.random() * arr.length)];
+}
+
+// Detay Modalını Aç (ZENGİNLEŞTİRİLMİŞ & DİNAMİK VERSİYON)
 function openDetail(item) {
     const nameInput = document.getElementById('userName');
     const userName = nameInput && nameInput.value ? nameInput.value : "Dostum";
+
+    // --- DİNAMİK ÖNERİ SEÇİMİ ---
+    // Eğer recommendationsPool tanımlıysa (recommendations.js yüklendiyse)
+    if (typeof recommendationsPool !== 'undefined' && recommendationsPool[item.id]) {
+        const pool = recommendationsPool[item.id];
+
+        // Havuzdan rastgele seç
+        const randomBook = getRandomItem(pool.books);
+        const randomMovie = getRandomItem(pool.movies);
+        const randomMusic = getRandomItem(pool.music);
+
+        // Mevcut önerileri güncelle (Geçici olarak)
+        // Not: Orijinal veriyi bozmamak için kopyasını oluşturmuyoruz,
+        // UI'da gösterilecek nesneyi güncelliyoruz.
+        if (!item.recommendations) item.recommendations = {};
+
+        if (randomBook) item.recommendations.book = randomBook;
+        if (randomMovie) item.recommendations.movie = randomMovie;
+
+        if (randomMusic) {
+            item.recommendations.musicId = randomMusic.id;
+            // Müzik başlığını da göstermek istersek extra bir field ekleyebiliriz ama
+            // şimdilik sadece ID değişiyor.
+        }
+
+        // Öneri nedeni metnini de biraz daha jenerik/tümüne uyan hale getirelim
+        item.recommendations.reason = `${item.title} karakterine sahip biri olarak, bu sanat eserlerinde kendinden bir parça bulacaksın. Senin derin dünyan için özenle seçildiler.`;
+    }
+    // ----------------------------
 
     // İçeriği temizle ve doldur
     const featuresHtml = item.features.map(f => `<span class="feature-tag">${f}</span>`).join('');
