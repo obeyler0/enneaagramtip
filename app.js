@@ -696,6 +696,32 @@ function calculateResultsAdvanced() {
         }
     }
 
+    // --- 4. TİPLER ARASI ÇELİŞKİ ANALİZİ (Inter-Type Conflict) ---
+    // Bazı tipler birbirine zıttır. İkisine de yüksek puan verilmesi tutarsızlıktır.
+    // Tip 1 (Düzenli) vs Tip 7 (Dağınık)
+    // Tip 8 (Çatışmacı) vs Tip 9 (Uyumlu)
+    // Tip 2 (İnsan Odaklı) vs Tip 5 (İzole)
+    // Tip 4 (Duygusal) vs Tip 3 (İş Odaklı/Duygusuz)
+
+    const conflicts = [
+        { t1: 1, t2: 7, reason: "Düzen (Tip 1) ve Daınıklık (Tip 7) çelişkisi" },
+        { t1: 8, t2: 9, reason: "Çatışma (Tip 8) ve Uyum (Tip 9) çelişkisi" },
+        { t1: 2, t2: 5, reason: "İlgi (Tip 2) ve İzolasyon (Tip 5) çelişkisi" },
+        { t1: 6, t2: 7, reason: "Şüphe (Tip 6) ve Aşırı İyimserlik (Tip 7) çelişkisi" }
+    ];
+
+    conflicts.forEach(pair => {
+        // Her iki tipin de ortalama puanına bak (Ham puanları topla / soru sayısı (9))
+        const score1 = typeScores[pair.t1] / 9; // -2 ile +2 arası ortalama
+        const score2 = typeScores[pair.t2] / 9;
+
+        // Eğer ikisi de "Katılıyorum" (0.5 üstü) barajını geçtiyse
+        if (score1 > 0.6 && score2 > 0.6) {
+            console.log(`Çelişki Tespit Edildi: ${pair.reason}`);
+            totalInconsistency += 15; // Zıt karakterlere yüksek puan verme cezası
+        }
+    });
+
     // Puan: Maksimum 0'a kadar düşebilir
     let consistencyScore = Math.max(0, 100 - totalInconsistency);
 
