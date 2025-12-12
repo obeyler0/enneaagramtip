@@ -524,7 +524,7 @@ function selectLikertOption(value) {
         // Hafif bir gecikme ile geçiş yap (UX)
         setTimeout(renderQuestion, 200);
     } else {
-        calculateAndShowResults();
+        calculateResultsAdvanced();
     }
 }
 
@@ -652,3 +652,92 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 });
+
+// --- GELİŞMİŞ HESAPLAMA (V2) ---
+function calculateResultsAdvanced() {
+    const progressFill = document.getElementById('progressFill');
+    progressFill.style.width = '100%';
+
+    // 1. Puanları Hesapla
+    let typeScores = {};
+    for (let i = 1; i <= 9; i++) typeScores[i] = 0;
+
+    userAnswers.forEach(ans => {
+        typeScores[ans.target] += ans.score;
+    });
+
+    // 2. En Yüksek Puanı Bul
+    let bestType = 1;
+    const sortedTypes = Object.entries(typeScores).sort((a, b) => b[1] - a[1]);
+    bestType = sortedTypes[0][0];
+
+    // 3. TUTARLILIK ANALİZİ (Tip İçi Çelişki)
+    let totalInconsistency = 0;
+
+    for (let i = 1; i <= 9; i++) {
+        // O tipe verilen cevapları filtrele (rawScore: -2, -1, 0, 1, 2)
+        const answers = userAnswers.filter(a => a.target === i).map(a => a.rawScore);
+
+        if (answers.length === 0) continue;
+
+        const posCount = answers.filter(x => x > 0).length;
+        const negCount = answers.filter(x => x < 0).length;
+
+        // Çelişki: Hem pozitif hem negatif cevaplar varsa
+        if (posCount > 0 && negCount > 0) {
+            const minSide = Math.min(posCount, negCount);
+            // Ceza: Azınlık tarafın sayısı * 4
+            totalInconsistency += (minSide * 4);
+        }
+
+        // Uç Çelişki: +2 ve -2 aynı anda varsa
+        if (answers.includes(2) && answers.includes(-2)) {
+            totalInconsistency += 5;
+        }
+    }
+
+    // Puan: Maksimum 0'a kadar düşebilir
+    let consistencyScore = Math.max(0, 100 - totalInconsistency);
+
+    // Varyans Kontrolü (Hep aynı cevap)
+    const allRaw = userAnswers.map(u => u.rawScore);
+    const allSame = allRaw.every(val => val === allRaw[0]);
+    if (allSame) consistencyScore = 0;
+
+    console.log("Gelişmiş Tutarlılık Puanı:", consistencyScore);
+
+    // Sonucu Göster
+    setTimeout(() => {
+        const typeData = enneagramData.find(t => t.id == bestType);
+        if (typeData) {
+            openDetail(typeData);
+
+            // Tutarlılık Badge'ini Ekle
+            const title = document.querySelector('.detail-tagline');
+            if (title) {
+                document.querySelectorAll('.result-meta').forEach(e => e.remove());
+
+                const metaDiv = document.createElement('div');
+                metaDiv.className = 'result-meta';
+                metaDiv.style.marginBottom = '15px';
+
+                let color = '#4ade80';
+                let text = "Güvenilir Sonuç ✅";
+
+                if (consistencyScore < 70) { color = '#facc15'; text = "Orta Güvenilirlik ⚠️"; }
+                if (consistencyScore < 40) { color = '#f87171'; text = "Düşük Güvenilirlik (Rastgele?) ❌"; }
+
+                metaDiv.innerHTML = `
+                    <span class="result-badge">🎉 Senin Enneagram Tipin</span>
+                    <div style="margin-top:10px; padding:10px; background:rgba(0,0,0,0.2); border-radius:10px;">
+                        <div style="font-size:0.8rem; opacity:0.8;">Test Tutarlılığı</div>
+                        <div style="font-size:1.1rem; color:${color}; font-weight:bold;">
+                            %${consistencyScore} - ${text}
+                        </div>
+                    </div>
+                `;
+                title.parentNode.insertBefore(metaDiv, title);
+            }
+        }
+    }, 500);
+}
