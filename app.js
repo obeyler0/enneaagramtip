@@ -950,6 +950,13 @@ function calculateResultsAdvancedOLD() {
 
     console.log("Gelişmiş Tutarlılık Puanı:", consistencyScore);
 
+    // --- KANAT VE TRITYPE HESAPLAMA ---
+    const wingData = calculateWing(bestType, typeScores);
+    const tritypeData = calculateTritype(typeScores);
+
+    console.log("Wing:", wingData);
+    console.log("Tritype:", tritypeData);
+
     // Sonucu Göster
     setTimeout(() => {
         const typeData = enneagramData.find(t => t.id == bestType);
@@ -981,7 +988,110 @@ function calculateResultsAdvancedOLD() {
                     </div>
                 `;
                 title.parentNode.insertBefore(metaDiv, title);
+
+                // --- KANAT VE TRITYPE GÖSTERİMİ ---
+                document.querySelectorAll('.advanced-analysis').forEach(e => e.remove());
+
+                const analysisDiv = document.createElement('div');
+                analysisDiv.className = 'advanced-analysis';
+                analysisDiv.style.marginTop = '20px';
+                analysisDiv.style.marginBottom = '20px';
+                analysisDiv.style.background = 'rgba(255,255,255,0.05)';
+                analysisDiv.style.padding = '15px';
+                analysisDiv.style.borderRadius = '12px';
+                analysisDiv.style.border = '1px solid rgba(255,255,255,0.1)';
+
+                analysisDiv.innerHTML = `
+                    <h3 style="color:#fff; margin-bottom:15px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:10px;">🧬 Detaylı Kişilik Analizi</h3>
+                    
+                    <!-- KANAT -->
+                    <div style="margin-bottom:15px;">
+                        <div style="font-size:0.9rem; color:#A8DADC;">🪽 Kanat (Wing)</div>
+                        <div style="font-size:1.4rem; font-weight:bold; color:#fff;">
+                            ${wingData.code}
+                        </div>
+                        <div style="font-size:0.9rem; color:#cbd5e1; margin-top:5px;">${wingData.desc}</div>
+                    </div>
+
+                    <!-- TRITYPE -->
+                    <div>
+                        <div style="font-size:0.9rem; color:#A8DADC;">🧠 Üçlü Arketipler (Tritype)</div>
+                        <div style="font-size:1.2rem; font-weight:bold; color:#fff; margin-top:5px;">
+                            ${tritypeData.code}
+                        </div>
+                        <div style="display:flex; gap:10px; margin-top:10px; flex-wrap:wrap;">
+                            <span class="feature-tag" style="background:#264653">🧠 ${tritypeData.head}</span>
+                            <span class="feature-tag" style="background:#E76F51">❤️ ${tritypeData.heart}</span>
+                            <span class="feature-tag" style="background:#2A9D8F">💪 ${tritypeData.gut}</span>
+                        </div>
+                    </div>
+                `;
+
+                title.parentNode.insertBefore(analysisDiv, title.nextSibling);
             }
         }
     }, 500);
+}
+
+// --- HELPER: KANAT HESAPLAMA ---
+function calculateWing(mainType, scores) {
+    mainType = parseInt(mainType);
+    let n = mainType;
+
+    // Komşuları Bul (Enneagram Dairesi)
+    let right = (n === 9) ? 1 : n + 1;
+    let left = (n === 1) ? 9 : n - 1;
+
+    let rightScore = scores[right];
+    let leftScore = scores[left];
+
+    let wing = (rightScore > leftScore) ? right : left;
+
+    return {
+        dominant: n,
+        wing: wing,
+        code: `${n}w${wing}`,
+        desc: `Temel tipin ${n}, ancak ${wing} tipinden de güçlü özellikler taşıyorsun.`
+    };
+}
+
+// --- HELPER: TRITYPE HESAPLAMA ---
+function calculateTritype(scores) {
+    // Merkezler
+    const centers = {
+        gut: [8, 9, 1],
+        heart: [2, 3, 4],
+        head: [5, 6, 7]
+    };
+
+    // Her merkezden şampiyonu seç
+    function getBestInCenter(centerIds) {
+        let best = centerIds[0];
+        centerIds.forEach(id => {
+            if (scores[id] > scores[best]) best = id;
+        });
+        return best;
+    }
+
+    const bestGut = getBestInCenter(centers.gut);
+    const bestHeart = getBestInCenter(centers.heart);
+    const bestHead = getBestInCenter(centers.head);
+
+    // Bu üçünü genel puana göre sırala
+    const finalists = [
+        { id: bestGut, score: scores[bestGut] },
+        { id: bestHeart, score: scores[bestHeart] },
+        { id: bestHead, score: scores[bestHead] }
+    ];
+
+    finalists.sort((a, b) => b.score - a.score);
+
+    const code = finalists.map(f => f.id).join('-');
+
+    return {
+        code: code,
+        gut: "Beden: Tip " + bestGut,
+        heart: "Kalp: Tip " + bestHeart,
+        head: "Zihin: Tip " + bestHead
+    };
 }
