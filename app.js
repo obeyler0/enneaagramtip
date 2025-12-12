@@ -883,31 +883,55 @@ function calculateResultsAdvancedOLD() {
         }
     }
 
-    // --- 4. TİPLER ARASI ÇELİŞKİ ANALİZİ (Inter-Type Conflict) ---
-    // Bazı tipler birbirine zıttır. İkisine de yüksek puan verilmesi tutarsızlıktır.
-    // Tip 1 (Düzenli) vs Tip 7 (Dağınık)
-    // Tip 8 (Çatışmacı) vs Tip 9 (Uyumlu)
-    // Tip 2 (İnsan Odaklı) vs Tip 5 (İzole)
-    // Tip 4 (Duygusal) vs Tip 3 (İş Odaklı/Duygusuz)
+    // --- 4. TİPLER ARASI ÇELİŞKİ ANALİZİ (KANAT VE TRITYPE UYUMLU) ---
+    // Eski algoritma Kanat ve Tritype'ı göz ardı ediyordu.
+    // Yeni mantık:
+    // - Komşu tipler (kanat olabilir) -> Çelişki YOK
+    // - Farklı merkezlerden tipler (tritype olabilir) -> Çelişki YOK
+    // - Aynı merkezde, komşu olmayan, 2+ tipe yüksek puan -> ŞÜPHELİ
 
-    const conflicts = [
-        { t1: 1, t2: 7, reason: "Düzen (Tip 1) ve Daınıklık (Tip 7) çelişkisi" },
-        { t1: 8, t2: 9, reason: "Çatışma (Tip 8) ve Uyum (Tip 9) çelişkisi" },
-        { t1: 2, t2: 5, reason: "İlgi (Tip 2) ve İzolasyon (Tip 5) çelişkisi" },
-        { t1: 6, t2: 7, reason: "Şüphe (Tip 6) ve Aşırı İyimserlik (Tip 7) çelişkisi" }
-    ];
+    const centers = {
+        gut: [8, 9, 1],    // Beden Merkezi
+        heart: [2, 3, 4],  // Kalp Merkezi
+        head: [5, 6, 7]    // Zihin Merkezi
+    };
 
-    conflicts.forEach(pair => {
-        // Her iki tipin de ortalama puanına bak (Ham puanları topla / soru sayısı (9))
-        const score1 = typeScores[pair.t1] / 9; // -2 ile +2 arası ortalama
-        const score2 = typeScores[pair.t2] / 9;
+    // Komşuluk haritası (Enneagram dairesi)
+    const neighbors = {
+        1: [9, 2], 2: [1, 3], 3: [2, 4], 4: [3, 5], 5: [4, 6],
+        6: [5, 7], 7: [6, 8], 8: [7, 9], 9: [8, 1]
+    };
 
-        // Eğer ikisi de "Katılıyorum" (0.5 üstü) barajını geçtiyse
-        if (score1 > 0.6 && score2 > 0.6) {
-            console.log(`Çelişki Tespit Edildi: ${pair.reason}`);
-            totalInconsistency += 15; // Zıt karakterlere yüksek puan verme cezası
+    // Her merkezdeki yüksek puanlı tipleri say
+    for (let centerName in centers) {
+        const centerTypes = centers[centerName];
+        let highScoreCount = 0;
+        let highScoreTypes = [];
+
+        centerTypes.forEach(typeId => {
+            const avgScore = typeScores[typeId] / 9;
+            if (avgScore > 0.6) {
+                highScoreCount++;
+                highScoreTypes.push(typeId);
+            }
+        });
+
+        // Eğer aynı merkezde 2'den fazla tipe yüksek puan verdiyse
+        if (highScoreCount > 2) {
+            console.log(`Şüpheli: ${centerName} merkezinde ${highScoreCount} tipe yüksek puan (${highScoreTypes.join(', ')})`);
+            totalInconsistency += 10;
         }
-    });
+
+        // Eğer tam 2 tipe yüksek puan verdiyse, komşu mu kontrol et
+        if (highScoreCount === 2) {
+            const [type1, type2] = highScoreTypes;
+            // Komşu değillerse şüpheli (çünkü kanat olamazlar)
+            if (!neighbors[type1].includes(type2)) {
+                console.log(`Şüpheli: ${centerName} merkezinde komşu olmayan ${type1} ve ${type2}'ye yüksek puan`);
+                totalInconsistency += 8;
+            }
+        }
+    }
 
     // Puan: Maksimum 0'a kadar düşebilir
     let consistencyScore = Math.max(0, 100 - totalInconsistency);
