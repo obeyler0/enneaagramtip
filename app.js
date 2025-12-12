@@ -653,8 +653,160 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 });
 
-// --- GELİŞMİŞ HESAPLAMA (V2) ---
+// --- YENİ VE GÜNCEL HESAPLAMA (V3) ---
 function calculateResultsAdvanced() {
+    const progressFill = document.getElementById('progressFill');
+    progressFill.style.width = '100%';
+
+    // 1. Puanları Hesapla
+    let typeScores = {};
+    for (let i = 1; i <= 9; i++) typeScores[i] = 0;
+
+    userAnswers.forEach(ans => {
+        typeScores[ans.target] += ans.score;
+    });
+
+    // 2. En Yüksek Puanı Bul
+    let bestType = 1;
+    const sortedTypes = Object.entries(typeScores).sort((a, b) => b[1] - a[1]);
+    bestType = sortedTypes[0][0];
+
+    // 3. TUTARLILIK ANALİZİ (Tip İçi Çelişki)
+    let totalInconsistency = 0;
+
+    for (let i = 1; i <= 9; i++) {
+        const answers = userAnswers.filter(a => a.target === i).map(a => a.rawScore);
+        if (answers.length === 0) continue;
+
+        const posCount = answers.filter(x => x > 0).length;
+        const negCount = answers.filter(x => x < 0).length;
+
+        if (posCount > 0 && negCount > 0) {
+            const minSide = Math.min(posCount, negCount);
+            totalInconsistency += (minSide * 4);
+        }
+
+        if (answers.includes(2) && answers.includes(-2)) {
+            totalInconsistency += 5;
+        }
+    }
+
+    // 4. TIPLER ARASI ÇELİŞKİ ANALİZİ
+    const conflicts = [
+        { t1: 1, t2: 7 }, { t1: 8, t2: 9 }, { t1: 2, t2: 5 }, { t1: 6, t2: 7 }
+    ];
+
+    conflicts.forEach(pair => {
+        const score1 = typeScores[pair.t1] / 9;
+        const score2 = typeScores[pair.t2] / 9;
+        if (score1 > 0.6 && score2 > 0.6) {
+            totalInconsistency += 15;
+        }
+    });
+
+    // Puan
+    let consistencyScore = Math.max(0, 100 - totalInconsistency);
+
+    // MONOTONLUK KONTROLÜ
+    let counts = { '-2': 0, '-1': 0, '0': 0, '1': 0, '2': 0 };
+    userAnswers.forEach(u => { counts[u.rawScore] = (counts[u.rawScore] || 0) + 1; });
+
+    let maxRepeat = 0;
+    for (let key in counts) { if (counts[key] > maxRepeat) maxRepeat = counts[key]; }
+
+    const repeatRatio = maxRepeat / userAnswers.length;
+
+    if (repeatRatio > 0.95) consistencyScore = 0;
+    else if (repeatRatio > 0.75) consistencyScore = Math.min(consistencyScore, 20);
+    else if (repeatRatio > 0.60) consistencyScore = Math.min(consistencyScore, 45);
+
+    // Sonucu Göster (Güvenlik Kontrollü)
+    setTimeout(() => {
+        // GÜVENLİK KONTROLÜ: Eğer tutarlılık çok düşükse (%40 altı) sonucu gösterme!
+        if (consistencyScore < 40) {
+            showConsistencyWarning(consistencyScore);
+            return;
+        }
+
+        const typeData = enneagramData.find(t => t.id == bestType);
+        if (typeData) {
+            openDetail(typeData);
+
+            const title = document.querySelector('.detail-tagline');
+            if (title) {
+                document.querySelectorAll('.result-meta').forEach(e => e.remove());
+                const metaDiv = document.createElement('div');
+                metaDiv.className = 'result-meta';
+                metaDiv.style.marginBottom = '15px';
+
+                let color = '#4ade80';
+                let text = "Güvenilir Sonuç ✅";
+
+                if (consistencyScore < 70) { color = '#facc15'; text = "Orta Güvenilirlik ⚠️"; }
+
+                metaDiv.innerHTML = `
+                    <span class="result-badge">🎉 Senin Enneagram Tipin</span>
+                    <div style="margin-top:10px; padding:10px; background:rgba(0,0,0,0.2); border-radius:10px;">
+                        <div style="font-size:0.8rem; opacity:0.8;">Test Tutarlılığı</div>
+                        <div style="font-size:1.1rem; color:${color}; font-weight:bold;">
+                            %${consistencyScore} - ${text}
+                        </div>
+                    </div>
+                `;
+                title.parentNode.insertBefore(metaDiv, title);
+            }
+        }
+    }, 500);
+}
+
+// Tutarlılık Hatası Ekranı
+function showConsistencyWarning(score) {
+    const detailContent = document.getElementById('detailContent');
+    const detailOverlay = document.getElementById('detailOverlay');
+
+    const content = `
+        <div style="text-align: center; padding: 20px;">
+            <div style="font-size: 4rem; margin-bottom: 20px;">🤔</div>
+            <h2 style="color: #f87171; margin-bottom: 15px;">Sonucun Hesaplanamadı</h2>
+            <p style="font-size: 1.1rem; line-height: 1.6; color: #cbd5e1; margin-bottom: 20px;">
+                Cevapların arasında çok fazla çelişki tespit ettik (Tutarlılık: %${score}). 
+                Seni yanlış bir kalıba sokmak veya hatalı bir analiz sunmak istemiyoruz.
+            </p>
+            
+            <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; text-align: left; margin-bottom: 25px;">
+                <strong>Olası Sebepler:</strong>
+                <ul style="margin-top: 10px; padding-left: 20px; color: #94a3b8;">
+                    <li>Soruları çok hızlı geçmiş olabilirsin.</li>
+                    <li>Kararsız kalıp rastgele seçenekleri işaretlemiş olabilirsin.</li>
+                    <li>Birbirine zıt (örneğin hem çok düzenli hem çok dağınık) cevaplar vermiş olabilirsin.</li>
+                </ul>
+            </div>
+
+            <button class="btn-primary" onclick="restartTest()" style="width: 100%;">
+                🔄 Testi Yeniden Başlat
+            </button>
+        </div>
+    `;
+
+    detailContent.innerHTML = content;
+    detailOverlay.classList.add('active');
+}
+
+function restartTest() {
+    closeDetail();
+    setTimeout(() => {
+        // Testi sıfırla
+        currentQuestionIndex = 0;
+        userAnswers = [];
+
+        // Giriş ekranına dön
+        document.getElementById('quizStartView').style.display = 'block';
+        document.getElementById('quizActiveView').style.display = 'none';
+    }, 300);
+}
+
+// --- GELİŞMİŞ HESAPLAMA (V2 - OLD) ---
+function calculateResultsAdvancedOLD() {
     const progressFill = document.getElementById('progressFill');
     progressFill.style.width = '100%';
 
