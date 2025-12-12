@@ -31,14 +31,53 @@ function renderCards() {
     });
 }
 
-// Detay Modalını Aç
+// Testi Başlat
+function startTest() {
+    const nameInput = document.getElementById('userName');
+    const name = nameInput.value.trim();
+
+    if (!name) {
+        alert("Lütfen başlamadan önce adını girer misin? 😊");
+        return;
+    }
+
+    userAnswers = [];
+    currentQuestionIndex = 0;
+
+    document.getElementById('quizStartView').style.display = 'none';
+    document.getElementById('quizActiveView').style.display = 'block';
+
+    renderQuestion();
+}
+
+// ... (renderQuestion, selectLikertOption vs. aynı kalıyor, değiştirmeye gerek yok)
+
+// Detay Modalını Aç (ZENGİNLEŞTİRİLMİŞ VERSİYON)
 function openDetail(item) {
+    const nameInput = document.getElementById('userName');
+    const userName = nameInput && nameInput.value ? nameInput.value : "Dostum";
+
     // İçeriği temizle ve doldur
     const featuresHtml = item.features.map(f => `<span class="feature-tag">${f}</span>`).join('');
+
+    // Güçlü ve Zayıf Yönler Listesi HTML
+    const strengthsHtml = item.strengths ? item.strengths.map(s => `<li>✅ ${s}</li>`).join('') : "";
+    const weaknessesHtml = item.weaknesses ? item.weaknesses.map(w => `<li>⚠️ ${w}</li>`).join('') : "";
+
+    // Müzik Embed (YouTube)
+    const musicEmbed = item.recommendations?.musicId ? `
+        <div class="video-container">
+            <iframe src="https://www.youtube.com/embed/${item.recommendations.musicId}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+    ` : "";
 
     const content = `
         <div class="detail-img-container">
             <img src="${item.image}" class="detail-img" alt="${item.title}">
+        </div>
+
+        <div style="text-align:center; margin-bottom: 20px;">
+            <span class="greeting-badge">Merhaba, ${userName}! 👋</span>
         </div>
 
         <h2 class="detail-title" style="color: ${item.color}">${item.title}</h2>
@@ -46,20 +85,65 @@ function openDetail(item) {
 
         <p class="section-title">Genel Bakış</p>
         <p class="detail-desc">${item.desc}</p>
-
+        
         <p class="section-title">Özellikler</p>
         <div class="features-list">${featuresHtml}</div>
 
+        <!-- YENİ BÖLÜM: Güçlü ve Zayıf Yönler -->
+        <div class="sw-grid">
+            <div class="sw-card strengths">
+                <h3>Güçlü Yönlerin 💪</h3>
+                <ul>${strengthsHtml}</ul>
+            </div>
+            <div class="sw-card weaknesses">
+                <h3>Gelişim Alanların  🌱</h3>
+                <ul>${weaknessesHtml}</ul>
+            </div>
+        </div>
+
         <div class="advice-box" style="border-left-color: ${item.color}; background: ${item.color}20">
-            <strong>Gelişim Tavsiyesi:</strong><br>
+            <strong>💡 Gelişim Tavsiyesi:</strong><br>
             ${item.advice}
         </div>
 
-        <!-- PAYLAŞ BUTONU (İçeriğin Parçası) -->
-        <button class="share-btn-bottom" onclick='openShareCard(${JSON.stringify(item)})'>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg>
-            Sonucu Paylaş
-        </button>
+        <!-- YENİ BÖLÜM: Sana Özel Öneriler -->
+        ${item.recommendations ? `
+        <div class="recommendations-section">
+            <h3 class="rec-title">Sana Özel Seçkiler 🎁</h3>
+            <p class="rec-desc">${item.recommendations.reason}</p>
+            
+            <div class="rec-grid">
+                <div class="rec-item book">
+                    <span class="rec-icon">📚</span>
+                    <div>
+                        <strong>Kitap Önerisi</strong>
+                        <p>${item.recommendations.book}</p>
+                    </div>
+                </div>
+                <div class="rec-item movie">
+                    <span class="rec-icon">🎬</span>
+                    <div>
+                        <strong>Film Önerisi</strong>
+                        <p>${item.recommendations.movie}</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="music-section">
+                <p><strong>🎵 Ruhunu Besleyecek Müzik</strong></p>
+                ${musicEmbed}
+            </div>
+        </div>
+        ` : ''}
+
+        <!-- PAYLAŞ BUTONU -->
+        <div class="share-action-area" id="shareActionArea" style="margin-top:30px;">
+             <!-- Dinamik olarak buton buraya gelebilir veya aşağıda kalabilir -->
+             <button class="share-btn-bottom" onclick='openShareCard(${JSON.stringify(item)})'>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg>
+                Sonucumu Paylaş
+            </button>
+        </div>
     `;
 
     detailContent.innerHTML = content;
@@ -67,7 +151,7 @@ function openDetail(item) {
     // Modalı göster
     detailOverlay.classList.add('active');
 
-    // History'ye ekle (hash değişimi ile)
+    // History'ye ekle
     window.history.pushState({ modal: 'detail' }, '', '#detail');
 }
 
