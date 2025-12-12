@@ -699,7 +699,38 @@ function calculateResultsAdvanced() {
     // Puan: Maksimum 0'a kadar düşebilir
     let consistencyScore = Math.max(0, 100 - totalInconsistency);
 
-    // Varyans Kontrolü (Hep aynı cevap)
+    // --- MONOTONLUK KONTROLÜ (Tekdüzelik) ---
+    // Kullanıcı sürekli aynı butona mı basmış?
+    // Cevapların dağılımını say (-2, -1, 0, 1, 2)
+    let counts = { '-2': 0, '-1': 0, '0': 0, '1': 0, '2': 0 };
+    userAnswers.forEach(u => {
+        counts[u.rawScore] = (counts[u.rawScore] || 0) + 1;
+    });
+
+    const totalQuestions = userAnswers.length;
+    let maxRepeat = 0;
+    for (let key in counts) {
+        if (counts[key] > maxRepeat) maxRepeat = counts[key];
+    }
+
+    const repeatRatio = maxRepeat / totalQuestions;
+    // Örn: 81 sorunun 70'i aynı şıksa oran ~0.86
+
+    if (repeatRatio > 0.95) {
+        // %95'ten fazlası aynı şık (Neredeyse hepsi)
+        consistencyScore = 0;
+        console.log("Hile Tespiti: %95 Aynı Cevap");
+    } else if (repeatRatio > 0.75) {
+        // %75'ten fazlası aynı şık (Çok şüpheli)
+        consistencyScore = Math.min(consistencyScore, 20);
+        console.log("Hile Tespiti: %75 Aynı Cevap");
+    } else if (repeatRatio > 0.60) {
+        // %60'tan fazlası aynı şık (Şüpheli)
+        consistencyScore = Math.min(consistencyScore, 45);
+        console.log("Hile Tespiti: %60 Aynı Cevap");
+    }
+
+    // Varyans Kontrolü (Tamamen aynıysa - Yedek Kontrol)
     const allRaw = userAnswers.map(u => u.rawScore);
     const allSame = allRaw.every(val => val === allRaw[0]);
     if (allSame) consistencyScore = 0;
