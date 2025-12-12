@@ -36,8 +36,16 @@ function startTest() {
     const nameInput = document.getElementById('userName');
     const name = nameInput.value.trim();
 
+    // Hata temizle
+    nameInput.classList.remove('error');
+
     if (!name) {
-        alert("Lütfen başlamadan önce adını girer misin? 😊");
+        // Görsel uyarı ver (Shake efekti)
+        nameInput.classList.add('error');
+        nameInput.placeholder = "Lütfen adını girer misin? 😊";
+
+        // Animasyon bitince class'ı sil (tekrar oynayabilmesi için)
+        setTimeout(() => nameInput.classList.remove('error'), 500);
         return;
     }
 
@@ -319,55 +327,128 @@ detailOverlay.addEventListener('click', (e) => {
     }
 });
 
-// --- YENİ TEST MANTIĞI (Likert Ölçeği) ---
+// --- YENİ TEST MANTIĞI (Likert Ölçeği - 81 Soru) ---
 
-// Soru Havuzu (20 Soru)
-// target: Hangi tipi ölçüyor?
-// weight: Sorunun ağırlığı (Ana sorular daha etkili olabilir)
-// reverse: Ters soru mu? (Örn: Tip 8 için "Güçsüzüm" derse puan düşmeli)
+/*
+  SORU DAĞILIMI (Her Tip İçin 9 Soru):
+  Tip 1: Mükemmeliyetçilik, Düzen, Öfke, Eleştiri
+  Tip 2: Yardımseverlik, İlgi İsteği, Hayır Diyememe
+  Tip 3: Başarı, İmaj, İşkoliklik, Rekabet
+  Tip 4: Özgünlük, Melankoli, Anlaşılmama, Kıskançlık
+  Tip 5: Bilgi, İzolasyon, Gözlem, Enerji Tasarrufu
+  Tip 6: Güvenlik, Şüphe, Sadakat, Otorite
+  Tip 7: Macera, Acıdan Kaçış, Odaklanma, Planlar
+  Tip 8: Güç, Kontrol, Adalet, Zayıflık
+  Tip 9: Uyum, Çatışmadan Kaçış, Erteleme, İnatlaşma
+*/
+
 const quizQuestions = [
-    // Tip 1: Mükemmeliyetçi
-    { text: "Yaptığım işlerde en ufak bir hata bile beni çok rahatsız eder.", target: 1 },
-    { text: "Kurallara uymayan insanlara karşı içten içe öfke duyarım.", target: 1 },
+    // --- TİP 1 ---
+    { text: "Yaptığım her işin eksiksiz ve mükemmel olması benim için hayati önem taşır.", target: 1 },
+    { text: "Başkalarının hatalarını fark ettiğimde içten içe gerilirim ve düzeltmek isterim.", target: 1 },
+    { text: "Kuralların esnetilmesinden hoşlanmam, herkes sorumluluğunu bilmeli.", target: 1 },
+    { text: "Kendimi sık sık eleştiririm ve daha iyisini yapabileceğimi düşünürüm.", target: 1 },
+    { text: "Zamanımı boşa harcamaktan nefret ederim, verimli olmalıyım.", target: 1 },
+    { text: "Dağınık ve plansız ortamlar beni huzursuz eder.", target: 1 },
+    { text: "Duygularımı kontrol altında tutmaya çalışırım, mantıklı olanı yaparım.", target: 1 },
+    { text: "Adaletsizlik gördüğümde sessiz kalamam, doğru olan neyse o yapılmalı.", target: 1 },
+    { text: "Dinlenirken bile aklım yapılması gereken işlerdedir.", target: 1 },
 
-    // Tip 2: Yardımsever
-    { text: "Başkalarının ihtiyaçlarını kendi ihtiyaçlarımın önüne koyarım.", target: 2 },
-    { text: "Sevilmediğimi veya istenmediğimi hissetmek beni derinden yaralar.", target: 2 },
+    // --- TİP 2 ---
+    { text: "Başkalarının ihtiyaçlarını hissetmekte ve karşılamakta çok iyiyimdir.", target: 2 },
+    { text: "Sevdiklerim tarafından takdir edilmemek veya fark edilmemek beni üzer.", target: 2 },
+    { text: "İnsanlara 'hayır' demekte zorlanırım, onları kırmak istemem.", target: 2 },
+    { text: "İlişkilerim benim için her şeyden önemlidir.", target: 2 },
+    { text: "Bazen başkalarına o kadar odaklanırım ki kendi ihtiyaçlarımı unuturum.", target: 2 },
+    { text: "Sevildiğimi hissetmek için fedakarlık yapmaktan çekinmem.", target: 2 },
+    { text: "İnsanlar bana sorunlarını anlattığında kendimi değerli hissederim.", target: 2 },
+    { text: "İlgi görmediğim ortamlarda enerjim düşer.", target: 2 },
+    { text: "Yardım teklifimin reddedilmesi beni kişisel olarak yaralar.", target: 2 },
 
-    // Tip 3: Başarı Odaklı
-    { text: "Başarılı olmak ve takdir edilmek benim için hayati önem taşır.", target: 3 },
-    { text: "Duygularımı bir kenara bırakıp hedefe odaklanmakta zorlanmam.", target: 3 },
+    // --- TİP 3 ---
+    { text: "Başarılı olmak ve hedeflerime ulaşmak hayatımın merkezindedir.", target: 3 },
+    { text: "Başkalarının beni nasıl gördüğü (imajım) benim için önemlidir.", target: 3 },
+    { text: "Rekabetçi bir yapım vardır, kaybetmekten hoşlanmam.", target: 3 },
+    { text: "Duygularımın işimi veya hedeflerimi yavaşlatmasına izin vermem.", target: 3 },
+    { text: "Sürekli meşgul olmayı severim, durmak bana göre değil.", target: 3 },
+    { text: "İnsanları etkilemek ve iyi bir izlenim bırakmak konusunda yetenekliyimdir.", target: 3 },
+    { text: "Başarısızlık benim için bir seçenek değildir, beni çok korkutur.", target: 3 },
+    { text: "Verimsiz insanlarla çalışmak beni sabırsızlandırır.", target: 3 },
+    { text: "Takdir edilmek ve onaylanmak beni motive eder.", target: 3 },
 
-    // Tip 4: Bireyci
-    { text: "Kendimi sıklıkla diğer insanlardan farklı ve anlaşılmaz hissederim.", target: 4 },
-    { text: "Melankolik müzikler veya hüzünlü anlar bana garip bir huzur verir.", target: 4 },
+    // --- TİP 4 ---
+    { text: "Kendimi sık sık diğer insanlardan farklı ve anlaşılmaz hissederim.", target: 4 },
+    { text: "Sıradan bir hayat yaşamak benim için kabus gibidir.", target: 4 },
+    { text: "Hüzünlü veya melankolik ruh halleri bana tanıdık ve bazen de tatlı gelir.", target: 4 },
+    { text: "Estetik ve güzellik benim için vazgeçilmezdir.", target: 4 },
+    { text: "Duygularımı çok yoğun ve derin yaşarım.", target: 4 },
+    { text: "Bazen eksik bir parçam varmış gibi hissederim.", target: 4 },
+    { text: "İnsanların yapmacık tavırları beni çok rahatsız eder.", target: 4 },
+    { text: "Geçmişe ve nostaljiye karşı bir özlem duyarım.", target: 4 },
+    { text: "Kendimi ifade etmenin özgün yollarını ararım (sanat, tarz vb.).", target: 4 },
 
-    // Tip 5: Araştırmacı
-    { text: "Duygusal tepkiler vermek yerine olayları mantık çerçevesinde incelerim.", target: 5 },
-    { text: "İnsanlarla çok fazla vakit geçirmek enerjimi tüketir, yalnızlığa ihtiyaç duyarım.", target: 5 },
+    // --- TİP 5 ---
+    { text: "Duygusal tepkiler vermek yerine olayları mantıkla analiz ederim.", target: 5 },
+    { text: "Kendi kendime kalmaya ve şarj olmaya çok ihtiyaç duyarım.", target: 5 },
+    { text: "İnsanların benden çok fazla şey beklemesi beni boğar.", target: 5 },
+    { text: "Bir konuyu derinlemesine öğrenmek ve uzmanlaşmak isterim.", target: 5 },
+    { text: "Çatışma anında geri çekilip gözlem yapmayı tercih ederim.", target: 5 },
+    { text: "Mahremiyetim ve özel alanım benim için kutsaldır.", target: 5 },
+    { text: "Harekete geçmeden önce elimde yeterince bilgi olduğundan emin olmalıyım.", target: 5 },
+    { text: "Duygularımı dışarı yansıtmakta zorlanırım.", target: 5 },
+    { text: "Bağımsız olmak ve kimseye muhtaç olmamak temel hedefimdir.", target: 5 },
 
-    // Tip 6: Sadık
-    { text: "Herhangi bir karar vermeden önce olası tüm tehlikeleri ve riskleri hesaplarım.", target: 6 },
-    { text: "Otoriteye veya güvendiğim bir sisteme sadık kalmak bana güven verir.", target: 6 },
+    // --- TİP 6 ---
+    { text: "Herhangi bir karar vermeden önce olası tüm riskleri ve tehlikeleri düşünürüm.", target: 6 },
+    { text: "Güvendiğim bir otoriteye veya sisteme sadık kalmak bana huzur verir.", target: 6 },
+    { text: "Zihnimde sürekli 'Ya şöyle olursa?' senaryoları döner.", target: 6 },
+    { text: "İnsanlara güvenmekte zorlanırım, niyetlerini sorgularım.", target: 6 },
+    { text: "Kendi kararlarımdan sık sık şüphe duyarım ve onay ararım.", target: 6 },
+    { text: "Tehlike anında grubumu ve sevdiklerimi korumak için her şeyi yaparım.", target: 6 },
+    { text: "Belirsizlik beni aşırı derecede kaygılandırır.", target: 6 },
+    { text: "Kurallara uymak güvenli hissettirir, ancak otorite adil değilse isyan edebilirim.", target: 6 },
+    { text: "Sorumluluk sahibiyimdir ve verdiğim sözleri tutarım.", target: 6 },
 
-    // Tip 7: Maceracı
-    { text: "Olumsuz duygulardan kaçınmak için kendimi sürekli meşgul eder veya eğlendiririm.", target: 7 },
-    { text: "Seçeneklerimin kısıtlanması veya bir şeye mecbur bırakılmak beni boğar.", target: 7 },
+    // --- TİP 7 ---
+    { text: "Hayatın tadını çıkarmak ve acıdan kaçınmak önceliğimdir.", target: 7 },
+    { text: "Seçeneklerimin kısıtlanması veya bir yere bağlanmak beni boğar.", target: 7 },
+    { text: "Zihnim sürekli yeni projeler ve heyecan verici fikirlerle doludur.", target: 7 },
+    { text: "Olumsuz duygularla yüzleşmek yerine dikkatimi başka yere veririm.", target: 7 },
+    { text: "Bir işe başlamak kolaydır ama sonunu getirmekte zorlanabilirim.", target: 7 },
+    { text: "İyimserimdir, her şeyin sonunda iyi olacağına inanırım.", target: 7 },
+    { text: "Aynı anda birden fazla işle ilgilenmeyi severim.", target: 7 },
+    { text: "Sıkılmaktan çok korkarım, sürekli aktivite ararım.", target: 7 },
+    { text: "İnsanları eğlendirmeyi ve ortamın enerjisini yükseltmeyi severim.", target: 7 },
 
-    // Tip 8: Meydan Okuyan
+    // --- TİP 8 ---
     { text: "Kontrolün bende olmasını severim, başkalarının beni yönetmesine izin vermem.", target: 8 },
     { text: "Çatışmadan korkmam, gerekirse hakkımı savunmak için sesimi yükseltirim.", target: 8 },
+    { text: "Zayıf görünmekten nefret ederim, her zaman güçlü durmalıyım.", target: 8 },
+    { text: "Sevdiklerimi koruma içgüdüm çok yüksektir.", target: 8 },
+    { text: "Dolaylı yollardan konuşan insanlardan hoşlanmam, netlik isterim.", target: 8 },
+    { text: "Bazen farkında olmadan insanları korkutabilir veya baskı kurabilirim.", target: 8 },
+    { text: "Kendi kurallarımı koymayı ve kendi yolumdan gitmeyi severim.", target: 8 },
+    { text: "Adaletsizliğe tahammülüm yoktur, hemen müdahale ederim.", target: 8 },
+    { text: "İntikam alma isteği duyabilirim eğer bana haksızlık yapılırsa.", target: 8 },
 
-    // Tip 9: Barışçı
+    // --- TİP 9 ---
     { text: "Çatışma ortamlarında gerilirim ve ortamı yumuşatmaya çalışırım.", target: 9 },
-    { text: "Başkalarına 'hayır' demekte zorlanırım, uyumlu olmayı tercih ederim.", target: 9 },
-
-    // Tutarlılık Kontrol Soruları (Algoritma bunları diğerleriyle kıyaslayacak)
-    // Soru 19 (Tip 1 kontrolü - Ters mantık):
-    { text: "İşler planladığım gibi gitmediğinde gayet rahatımdır ve akışına bırakırım.", target: 1, reverse: true },
-    // Soru 20 (Tip 8 kontrolü - Doğrulama):
-    { text: "Güçlü görünmek benim için önemlidir.", target: 8 }
+    { text: "Başkalarına uyum sağlamak adına kendi isteklerimi geri plana atarım.", target: 9 },
+    { text: "Hayırlı bir iş için bile olsa harekete geçmekte zorlanabilirim (Atalet).", target: 9 },
+    { text: "İç huzurumu bozacak her şeyden uzak durmaya çalışırım.", target: 9 },
+    { text: "Karar vermekte zorlanırım, çünkü her seçeneğin iyi yanını görürüm.", target: 9 },
+    { text: "Baskı altında inatçılaşabilirim ve pasif bir direnç gösteririm.", target: 9 },
+    { text: "'Fark etmez', 'Sen bilirsin' kalıplarını sık kullanırım.", target: 9 },
+    { text: "Öfkelendiğimi nadiren belli ederim, genelde içime atarım.", target: 9 },
+    { text: "Doğayla veya hobilerimle vakit geçirerek rahatlarım.", target: 9 }
 ];
+
+// Soruları Karıştır (Shuffle)
+// Fisher-Yates Shuffle Algorithm
+for (let i = quizQuestions.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [quizQuestions[i], quizQuestions[j]] = [quizQuestions[j], quizQuestions[i]];
+}
 
 const likertOptions = [
     { text: "Kesinlikle Katılmıyorum", value: -2, icon: "🔴" },

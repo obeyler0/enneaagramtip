@@ -963,6 +963,34 @@ h1 {
     }
 }
 
+.name-input.error {
+    border-color: #ef4444;
+    animation: shake 0.5s;
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+}
+
+@keyframes shake {
+    0% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-10px);
+    }
+
+    50% {
+        transform: translateX(10px);
+    }
+
+    75% {
+        transform: translateX(-10px);
+    }
+
+    100% {
+        transform: translateX(0);
+    }
+}
+
 /* --- LIKERT TEST STYLES --- */
 .likert-container {
     display: flex;
