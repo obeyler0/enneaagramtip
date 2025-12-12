@@ -235,204 +235,72 @@ detailOverlay.addEventListener('click', (e) => {
     }
 });
 
-// --- TEST MANTIĞI ---
+// --- YENİ TEST MANTIĞI (Likert Ölçeği) ---
 
-// Basit Test Soruları (Her soru belirli tiplere puan verir)
-// 1 = Mükemmeliyetçi, 2 = Yardımsever, 3 = Başarı, 4 = Bireyci, 5 = Araştırmacı
-// 6 = Sadık, 7 = Maceracı, 8 = Meydan Okuyan, 9 = Barışçı
-
+// Soru Havuzu (20 Soru)
+// target: Hangi tipi ölçüyor?
+// weight: Sorunun ağırlığı (Ana sorular daha etkili olabilir)
+// reverse: Ters soru mu? (Örn: Tip 8 için "Güçsüzüm" derse puan düşmeli)
 const quizQuestions = [
-    {
-        text: "Bir sorunla karşılaştığında ilk tepkin ne olur?", options: [
-            { text: "Doğru ve kuralına uygun şekilde çözmeye çalışırım.", types: [1, 6] },
-            { text: "Başkalarına nasıl yardım edebileceğimi düşünürüm.", types: [2, 9] },
-            { text: "Hızlıca çözüp yoluma devam etmek isterim.", types: [3, 7, 8] },
-            { text: "Önce sorunu tüm detaylarıyla analiz ederim.", types: [5] }
-        ]
-    },
-    {
-        text: "Seni en çok ne korkutur?", options: [
-            { text: "Hata yapmak veya eleştirilmek.", types: [1, 3] },
-            { text: "Sevilmemek veya istenmemek.", types: [2, 4] },
-            { text: "Kontrolü kaybetmek veya incitilmek.", types: [8, 6] },
-            { text: "Acı çekmek veya yoksun kalmak.", types: [7, 5] },
-            { text: "Çatışma veya huzursuzluk.", types: [9] }
-        ]
-    },
-    {
-        text: "Boş zamanlarında ne yapmaktan hoşlanırsın?", options: [
-            { text: "Kendimi geliştirecek konularla ilgilenirim.", types: [1, 3, 5] },
-            { text: "Arkadaşlarımla sosyalleşmek ve onlara destek olmak.", types: [2, 6] },
-            { text: "Yalnız kalıp hayallere dalmak veya sanatla ilgilenmek.", types: [4, 9] },
-            { text: "Heyecan verici yeni maceralar aramak.", types: [7, 8] }
-        ]
-    },
-    {
-        text: "İnsanlar seni genellikle nasıl tanımlar?", options: [
-            { text: "Güvenilir, düzenli ve ciddi.", types: [1, 6] },
-            { text: "Sıcakkanlı, cömert ve fedakar.", types: [2] },
-            { text: "Başarılı, hırslı ve enerjik.", types: [3, 7] },
-            { text: "Farklı, derin ve duygusal.", types: [4] },
-            { text: "Sessiz, gözlemci ve zeki.", types: [5, 9] },
-            { text: "Güçlü, koruyucu ve lider.", types: [8] }
-        ]
-    },
-    {
-        text: "Bir grup çalışmasında rolün nedir?", options: [
-            { text: "Liderliği alır ve yönlendiririm.", types: [8, 3] },
-            { text: "Herkesin uyumlu çalışmasını sağlarım.", types: [9, 2] },
-            { text: "Riskleri hesaplar ve eksikleri bulurum.", types: [6, 1] },
-            { text: "Yaratıcı ve orijinal fikirler üretirim.", types: [4, 7] },
-            { text: "Bilgi ve strateji sağlarım.", types: [5] }
-        ]
-    },
-    {
-        text: "Stres altındayken nasıl davranırsın?", options: [
-            { text: "Daha eleştirel ve gergin olurum.", types: [1] },
-            { text: "İçime kapanır ve insanlardan uzaklaşırım.", types: [5, 9] },
-            { text: "Duygusal patlamalar yaşarım.", types: [2, 4] },
-            { text: "Harekete geçer ve agresifleşebilirim.", types: [8] },
-            { text: "Dikkatim dağılır, başka şeylere odaklanırım.", types: [7] },
-            { text: "Endişelenir ve her ihtimali düşünürüm.", types: [6] }
-        ]
-    },
-    {
-        text: "Hayattaki temel motivasyonun nedir?", options: [
-            { text: "Huzurlu olmak ve çatışmadan kaçınmak.", types: [9] },
-            { text: "Güvende olmak ve desteklenmek.", types: [6] },
-            { text: "Özgün olmak ve kendimi ifade etmek.", types: [4] },
-            { text: "Bilmek ve dünyayı anlamak.", types: [5] },
-            { text: "Faydalı olmak ve sevilmek.", types: [2] },
-            { text: "Mükemmel olmak ve doğruyu yapmak.", types: [1] }
-        ]
-    },
-    {
-        text: "Karar verirken neye güvenirsin?", options: [
-            { text: "Mantığıma ve verilere.", types: [5, 1, 3] },
-            { text: "Duygularıma ve sezgilerime.", types: [4, 2] },
-            { text: "İçgüdülerime ve o anki duruma.", types: [8, 7] },
-            { text: "Başkalarının fikrine ve otoriteye.", types: [6, 9] }
-        ]
-    },
-    {
-        text: "Duygularını nasıl yaşarsın?", options: [
-            { text: "Çok yoğun ve derin yaşarım.", types: [4] },
-            { text: "Bastırmaya çalışır, mantıklı kalırım.", types: [1, 5, 3] },
-            { text: "Dışa vurmaktan çekinmem.", types: [8, 2] },
-            { text: "Olumsuz duygulardan kaçınır, pozitife odaklanırım.", types: [7, 9] },
-            { text: "Duygularım değişkendir, bazen endişeli olurum.", types: [6] }
-        ]
-    },
-    {
-        text: "Eleştiri aldığında ne yaparsın?", options: [
-            { text: "Kendimi savunur ve öfkelenirim.", types: [8] },
-            { text: "Çok ciddiye alır ve kendimi düzeltmeye çalışırım.", types: [1, 3] },
-            { text: "Kırılırım ve kişisel algılarım.", types: [2, 4] },
-            { text: "Mantıklıysa kabul eder, değilse umursamam.", types: [5, 7] },
-            { text: "Gerilirim ve ne yapacağımı bilemem.", types: [6, 9] }
-        ]
-    },
-    {
-        text: "Bir partide nasılsındır?", options: [
-            { text: "İlgi odağı olurum ve herkesi eğlendiririm.", types: [7, 3] },
-            { text: "Tanıdığım birkaç kişiyle derin sohbet ederim.", types: [4, 6] },
-            { text: "Gözlem yapmayı tercih ederim, sessiz kalırım.", types: [5] },
-            { text: "İnsanların ihtiyaçlarıyla ilgilenirim.", types: [2, 9] },
-            { text: "Durumu kontrol eder, liderlik yaparım.", types: [8] }
-        ]
-    },
-    {
-        text: "Geçmişe bakış açın nasıldır?", options: [
-            { text: "Geçmişteki hatalarıma takılırım.", types: [1, 4] },
-            { text: "Nostaljiyi severim, güzel anıları hatırlarım.", types: [9] },
-            { text: "Geçmiş geçmişte kaldı, geleceğe bakarım.", types: [3, 7, 8] },
-            { text: "Geçmişten dersler çıkarıp analiz ederim.", types: [5, 6] }
-        ]
-    },
-    {
-        text: "Başarısızlık senin için ne ifade eder?", options: [
-            { text: "Yetersizlik hissi, çok korkarım.", types: [3] },
-            { text: "Bir öğrenme fırsatı.", types: [5, 7] },
-            { text: "Daha iyisini yapmak için bir uyarı.", types: [1] },
-            { text: "Güçsüzlük göstergesi, kabul edilemez.", types: [8] }
-        ]
-    },
-    {
-        text: "Kurallara yaklaşımın nasıldır?", options: [
-            { text: "Kurallar düzen için gereklidir, uyarım.", types: [1, 6] },
-            { text: "Beni kısıtlıyorsa esnetebilirim.", types: [7, 3] },
-            { text: "Sadece mantıklı bulursam uyarım.", types: [5] },
-            { text: "Kendi kurallarımı kendim koyarım.", types: [8, 4] }
-        ]
-    },
-    {
-        text: "En belirgin kusurun ne olabilir?", options: [
-            { text: "Fazla mükemmeliyetçilik.", types: [1] },
-            { text: "İnsanlara hayır diyememek.", types: [2, 9] },
-            { text: "Duygusal dengesizlik.", types: [4] },
-            { text: "Şüphecilik ve endişe.", types: [6] },
-            { text: "Sabırsızlık ve odaklanma sorunu.", types: [7] },
-            { text: "İnsanlara mesafeli durmak.", types: [5] }
-        ]
-    },
-    {
-        text: "Seni en çok ne motive eder?", options: [
-            { text: "Takdir edilmek ve onaylanmak.", types: [3, 2] },
-            { text: "Özgürlük ve seçeneklere sahip olmak.", types: [7] },
-            { text: "Güçlü ve bağımsız olmak.", types: [8] },
-            { text: "İç huzuru ve denge.", types: [9] }
-        ]
-    },
-    {
-        text: "Çatışma anında ne yaparsın?", options: [
-            { text: "Geri çekilir ve sakinleşmeyi beklerim.", types: [9, 5] },
-            { text: "Doğrudan yüzleşir ve çözerim.", types: [8, 3] },
-            { text: "Diplomatik davranır, ara yolu bulurum.", types: [2] },
-            { text: "Duygusal tepki verir, küsebilirim.", types: [4] },
-            { text: "Haklı olduğumu kanıtlamaya çalışırım.", types: [1, 6] }
-        ]
-    },
-    {
-        text: "Hangi süper gücü istersin?", options: [
-            { text: "Zihin okumak / Her şeyi bilmek.", types: [5] },
-            { text: "Görünmez olmak.", types: [9, 4] },
-            { text: "Uçmak / Işınlanmak.", types: [7] },
-            { text: "Zamanı durdurmak / Düzenlemek.", types: [1, 6] },
-            { text: "Süper güç / Dayanıklılık.", types: [8, 3] },
-            { text: "İyileştirme gücü.", types: [2] }
-        ]
-    },
-    {
-        text: "Kendini geliştirmek için ne yaparsın?", options: [
-            { text: "Kitap okur, araştırır, öğrenirim.", types: [5, 1] },
-            { text: "Yeni deneyimlere atılırım.", types: [7, 4] },
-            { text: "Hedefler koyar ve çalışırım.", types: [3, 8] },
-            { text: "Meditasyon yapar, içime dönerim.", types: [9] }
-        ]
-    },
-    {
-        text: "Bu testi neden çözüyorsun?", options: [
-            { text: "Kendimi daha iyi anlamak için.", types: [4, 5] },
-            { text: "Eğlenceli göründüğü için.", types: [7, 2] },
-            { text: "Merak ettiğim ve doğruluğunu test etmek için.", types: [6, 1] },
-            { text: "Sonucun başarımına katkısı olacağı için.", types: [3, 8] }
-        ]
-    }
+    // Tip 1: Mükemmeliyetçi
+    { text: "Yaptığım işlerde en ufak bir hata bile beni çok rahatsız eder.", target: 1 },
+    { text: "Kurallara uymayan insanlara karşı içten içe öfke duyarım.", target: 1 },
+
+    // Tip 2: Yardımsever
+    { text: "Başkalarının ihtiyaçlarını kendi ihtiyaçlarımın önüne koyarım.", target: 2 },
+    { text: "Sevilmediğimi veya istenmediğimi hissetmek beni derinden yaralar.", target: 2 },
+
+    // Tip 3: Başarı Odaklı
+    { text: "Başarılı olmak ve takdir edilmek benim için hayati önem taşır.", target: 3 },
+    { text: "Duygularımı bir kenara bırakıp hedefe odaklanmakta zorlanmam.", target: 3 },
+
+    // Tip 4: Bireyci
+    { text: "Kendimi sıklıkla diğer insanlardan farklı ve anlaşılmaz hissederim.", target: 4 },
+    { text: "Melankolik müzikler veya hüzünlü anlar bana garip bir huzur verir.", target: 4 },
+
+    // Tip 5: Araştırmacı
+    { text: "Duygusal tepkiler vermek yerine olayları mantık çerçevesinde incelerim.", target: 5 },
+    { text: "İnsanlarla çok fazla vakit geçirmek enerjimi tüketir, yalnızlığa ihtiyaç duyarım.", target: 5 },
+
+    // Tip 6: Sadık
+    { text: "Herhangi bir karar vermeden önce olası tüm tehlikeleri ve riskleri hesaplarım.", target: 6 },
+    { text: "Otoriteye veya güvendiğim bir sisteme sadık kalmak bana güven verir.", target: 6 },
+
+    // Tip 7: Maceracı
+    { text: "Olumsuz duygulardan kaçınmak için kendimi sürekli meşgul eder veya eğlendiririm.", target: 7 },
+    { text: "Seçeneklerimin kısıtlanması veya bir şeye mecbur bırakılmak beni boğar.", target: 7 },
+
+    // Tip 8: Meydan Okuyan
+    { text: "Kontrolün bende olmasını severim, başkalarının beni yönetmesine izin vermem.", target: 8 },
+    { text: "Çatışmadan korkmam, gerekirse hakkımı savunmak için sesimi yükseltirim.", target: 8 },
+
+    // Tip 9: Barışçı
+    { text: "Çatışma ortamlarında gerilirim ve ortamı yumuşatmaya çalışırım.", target: 9 },
+    { text: "Başkalarına 'hayır' demekte zorlanırım, uyumlu olmayı tercih ederim.", target: 9 },
+
+    // Tutarlılık Kontrol Soruları (Algoritma bunları diğerleriyle kıyaslayacak)
+    // Soru 19 (Tip 1 kontrolü - Ters mantık):
+    { text: "İşler planladığım gibi gitmediğinde gayet rahatımdır ve akışına bırakırım.", target: 1, reverse: true },
+    // Soru 20 (Tip 8 kontrolü - Doğrulama):
+    { text: "Güçlü görünmek benim için önemlidir.", target: 8 }
 ];
 
+const likertOptions = [
+    { text: "Kesinlikle Katılmıyorum", value: -2, icon: "🔴" },
+    { text: "Katılmıyorum", value: -1, icon: "⭕" },
+    { text: "Kararsızım", value: 0, icon: "⚪" },
+    { text: "Katılıyorum", value: 1, icon: "🟢" },
+    { text: "Kesinlikle Katılıyorum", value: 2, icon: "✅" }
+];
 
 let currentQuestionIndex = 0;
-let scores = {}; // { 1: 0, 2: 0 ... }
+let userAnswers = []; // { target: 1, score: 2 } gibi kayıtlar
 
 // Testi Başlat
 function startTest() {
-    // Skorları sıfırla
-    scores = {};
-    for (let i = 1; i <= 9; i++) scores[i] = 0;
-
+    userAnswers = [];
     currentQuestionIndex = 0;
 
-    // UI Güncelle: Intro'yu gizle, soruyu göster
     document.getElementById('quizStartView').style.display = 'none';
     document.getElementById('quizActiveView').style.display = 'block';
 
@@ -445,18 +313,24 @@ function renderQuestion() {
     const quizContent = document.getElementById('quizContent');
     const progressFill = document.getElementById('progressFill');
 
-    // Progress bar güncelle
+    // Progress bar
     const progress = ((currentQuestionIndex) / quizQuestions.length) * 100;
     progressFill.style.width = `${progress}%`;
 
     let html = `
-        <div class="question-card">
-            <h2 class="question-text">${q.text}</h2>
-            <div class="options-grid">
+        <div class="question-card fade-in">
+            <div class="question-number">Soru ${currentQuestionIndex + 1} / ${quizQuestions.length}</div>
+            <h2 class="question-text likert-text">"${q.text}"</h2>
+            <div class="likert-container">
     `;
 
-    q.options.forEach((opt, idx) => {
-        html += `<button class="option-btn" onclick="selectOption(${idx})">${opt.text}</button>`;
+    likertOptions.forEach((opt, idx) => {
+        html += `
+            <button class="likert-btn" onclick="selectLikertOption(${opt.value})">
+                <span class="l-icon">${opt.icon}</span>
+                <span class="l-text">${opt.text}</span>
+            </button>
+        `;
     });
 
     html += `</div></div>`;
@@ -464,69 +338,118 @@ function renderQuestion() {
 }
 
 // Seçenek Seçilince
-function selectOption(optionIndex) {
+function selectLikertOption(value) {
     const q = quizQuestions[currentQuestionIndex];
-    const selectedOption = q.options[optionIndex];
 
-    // Puanları ekle
-    selectedOption.types.forEach(type => {
-        scores[type] += 1;
+    // Cevabı kaydet
+    // Eğer ters soruysa puanı tersine çevir (2 -> -2, -1 -> 1)
+    let finalScore = value;
+    if (q.reverse) finalScore = -value;
+
+    userAnswers.push({
+        target: q.target,
+        score: finalScore,
+        rawScore: value, // Tutarlılık kontrolü için ham puan
+        questionIndex: currentQuestionIndex
     });
 
-    // Sonraki soruya geç
     currentQuestionIndex++;
 
     if (currentQuestionIndex < quizQuestions.length) {
-        renderQuestion();
+        // Hafif bir gecikme ile geçiş yap (UX)
+        setTimeout(renderQuestion, 200);
     } else {
-        showResults();
+        calculateAndShowResults();
     }
 }
 
-// Sonuçları Göster
-function showResults() {
+// Sonuçları Hesapla
+function calculateAndShowResults() {
     const progressFill = document.getElementById('progressFill');
     progressFill.style.width = '100%';
 
-    // En yüksek puanı alanı bul
-    let maxScore = -1;
+    // 1. Puanları Hesapla
+    let typeScores = {};
+    for (let i = 1; i <= 9; i++) typeScores[i] = 0;
+
+    userAnswers.forEach(ans => {
+        // Negatif puanları düşme, sadece topla. 
+        // Ama Enneagram'da yüksek puan o tipi gösterir.
+        // -2 verdiyse o tipten uzaklaşır.
+        typeScores[ans.target] += ans.score;
+    });
+
+    // 2. En Yüksek Puanı Bul
+    let maxScore = -100;
     let bestType = 1;
 
-    for (const [type, score] of Object.entries(scores)) {
-        if (score > maxScore) {
-            maxScore = score;
-            bestType = type;
-        }
+    // Puanları normalize et (Negatifleri sıfıra çekebiliriz veya olduğu gibi bırakabiliriz)
+    // Sıralama yap
+    const sortedTypes = Object.entries(typeScores).sort((a, b) => b[1] - a[1]);
+    bestType = sortedTypes[0][0];
+
+    // 3. Tutarlılık Analizi (Consistency Check)
+    let consistencyScore = 100;
+
+    // Soru 0 (Tip 1) vs Soru 18 (Tip 1 Reverse)
+    // Soru 0'a "Katılıyorum" (2), Soru 18'e "Katılıyorum" (2) dediyse -> Çelişki!
+    // Soru 0: Hata rahatsız eder. Soru 18: Rahatımdır.
+    // İkisine de katılıyorsa tutarlılık düşmeli.
+    const q1Ans = userAnswers.find(a => a.questionIndex === 0).rawScore;
+    const q19Ans = userAnswers.find(a => a.questionIndex === 18).rawScore;
+
+    // Aynı yönde cevap verdiyse (ikisi de pozitif veya ikisi de negatif) çelişki vardır çünkü biri ters soru.
+    if ((q1Ans > 0 && q19Ans > 0) || (q1Ans < 0 && q19Ans < 0)) {
+        consistencyScore -= 15;
     }
 
-    // Modal açmadan önce hafif bekle
+    // Soru 14 (Tip 8) vs Soru 19 (Tip 8) -> İkisi de düz soru.
+    // İkisine de zıt cevap verdiyse tutarlılık düşer.
+    const q14Ans = userAnswers.find(a => a.questionIndex === 14).rawScore; // 8. sorunun ilki
+    const q20Ans = userAnswers.find(a => a.questionIndex === 19).rawScore; // 8. sorunun ikincisi
+
+    if (Math.abs(q14Ans - q20Ans) > 2) { // Biri 2, biri -2 ise fark 4 -> Büyük çelişki
+        consistencyScore -= 15;
+    }
+
+    // Genel Varyans Kontrolü: Hep "Kararsızım" (0) seçildiyse?
+    const zeroCount = userAnswers.filter(a => a.rawScore === 0).length;
+    if (zeroCount > 10) consistencyScore -= 20; // 10'dan fazla kararsız
+
+    // Sonucu Göster
     setTimeout(() => {
         const typeData = enneagramData.find(t => t.id == bestType);
         if (typeData) {
             openDetail(typeData);
 
-            // Kullanıcıyı bilgilendir
+            // Tutarlılık Mesajını Ekle
+            // Bunu detay modalının içine dinamik ekleyelim veya badge olarak
             const title = document.querySelector('.detail-tagline');
             if (title) {
-                // Varsa eski badge'i temizle
-                const oldBadge = document.querySelector('.result-badge');
-                if (oldBadge) oldBadge.remove();
+                // Temizlik
+                document.querySelectorAll('.result-meta').forEach(e => e.remove());
 
-                const badge = document.createElement('div');
-                badge.className = 'result-badge';
-                badge.style.cssText = "background:var(--accent); color:white; padding:5px 10px; display:inline-block; border-radius:8px; margin-bottom:10px; font-size:0.8rem;";
-                badge.innerText = "🎉 Senin Enneagram Tipin";
-                title.parentNode.insertBefore(badge, title);
+                const metaDiv = document.createElement('div');
+                metaDiv.className = 'result-meta';
+                metaDiv.style.marginBottom = '15px';
+
+                let consistencyColor = '#4ade80'; // Yeşil
+                if (consistencyScore < 70) consistencyColor = '#facc15'; // Sarı
+                if (consistencyScore < 50) consistencyColor = '#f87171'; // Kırmızı
+
+                metaDiv.innerHTML = `
+                    <span class="result-badge">🎉 Senin Enneagram Tipin</span>
+                    <div style="margin-top:5px; font-size:0.8rem; color:${consistencyColor}; font-weight:bold;">
+                        ✅ Test Tutarlılık Oranı: %${consistencyScore}
+                    </div>
+                `;
+                title.parentNode.insertBefore(metaDiv, title);
             }
         }
-
-        // Testi resetle ve ana sayfaya dön (opsiyonel)
-        // switchPage('home'); 
     }, 500);
 }
 
 function closeTest() {
-    // Opsiyonel: Testi iptal edip intro ekranına dön
     document.getElementById('quizStartView').style.display = 'block';
     document.getElementById('quizActiveView').style.display = 'none';
 }
