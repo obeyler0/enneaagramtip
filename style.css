@@ -1346,3 +1346,290 @@ h1 {
         margin-top: 0;
     }
 }
+
+/* --- THEORY TABS --- */
+.theory-tabs {
+    display: flex;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 5px;
+    margin-bottom: 25px;
+    gap: 10px;
+}
+
+.theory-tab-btn {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.theory-tab-btn:hover {
+    color: var(--text-light);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.theory-tab-btn.active {
+    background: var(--primary);
+    color: white;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+.theory-content {
+    animation: fadeIn 0.4s ease;
+}
+
+/* Wing Card Styles (JS ile oluşturulanlar için) */
+.wing-card-container {
+    margin-bottom: 30px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 20px;
+}
+
+.wing-card-container:last-child {
+    border-bottom: none;
+}
+
+.wing-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.wing-badge {
+    background: var(--surface);
+    color: var(--primary);
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 0.9rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.wing-sub-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 15px;
+}
+
+.wing-detail-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    padding: 15px;
+}
+
+.wing-detail-title {
+    color: var(--accent);
+    font-weight: bold;
+    margin-bottom: 8px;
+    font-size: 1.1rem;
+}
+
+.wing-trait-list {
+    margin-top: 10px;
+    list-style: none;
+    padding: 0;
+}
+
+.wing-trait-list li {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.wing-trait-list li::before {
+    content: "•";
+    color: var(--primary);
+}
+
+/* --- GAME PAGE STYLES --- */
+.game-wrapper {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.game-container {
+    width: 100%;
+    max-width: 500px;
+    animation: fadeIn 0.4s ease;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.game-icon {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    filter: drop-shadow(0 0 20px rgba(231, 111, 81, 0.5));
+}
+
+.game-subtitle {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 15px;
+}
+
+.game-desc {
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 30px;
+}
+
+.game-header-top {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.score-badge,
+.timer-badge {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 0.9rem;
+    color: #fff;
+}
+
+.question-card-game {
+    background: rgba(30, 41, 59, 0.8) !important;
+    border: 2px solid var(--accent);
+    padding: 30px !important;
+    text-align: center;
+    margin-bottom: 30px;
+    position: relative;
+    overflow: visible !important;
+}
+
+.quote-icon {
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--bg-dark);
+    color: var(--accent);
+    font-size: 2.5rem;
+    line-height: 1;
+    padding: 0 10px;
+    font-family: serif;
+}
+
+#gameQuestionText {
+    font-size: 1.3rem;
+    line-height: 1.5;
+    font-weight: 600;
+    color: #fff;
+    font-family: 'Outfit', sans-serif;
+}
+
+.options-grid-game {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.game-option-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 15px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.game-option-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-3px);
+}
+
+.game-option-btn.correct {
+    background: #22c55e !important;
+    border-color: #22c55e !important;
+    box-shadow: 0 0 20px rgba(34, 197, 94, 0.4);
+}
+
+.game-option-btn.wrong {
+    background: #ef4444 !important;
+    border-color: #ef4444 !important;
+    opacity: 0.6;
+}
+
+.feedback-msg {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    font-weight: bold;
+    animation: fadeIn 0.3s ease;
+}
+
+.feedback-msg.correct {
+    background: rgba(34, 197, 94, 0.2);
+    color: #4ade80;
+    border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.feedback-msg.wrong {
+    background: rgba(239, 68, 68, 0.2);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.final-score {
+    font-size: 5rem;
+    font-weight: 800;
+    font-family: 'Outfit', sans-serif;
+    background: linear-gradient(to right, #facc15, #fbbf24);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 10px 0;
+}
+
+.score-comment {
+    color: var(--text-secondary);
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+}
+
+.result-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.nav-btn-game {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    padding: 12px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+@media (max-width: 400px) {
+    .options-grid-game {
+        grid-template-columns: 1fr;
+    }
+}

@@ -26,7 +26,12 @@
 
 
             <div class="nav-links">
-                <button class="nav-btn active" onclick="switchPage('home')">
+                <button class="nav-btn active" onclick="switchPage('test')">
+                    <span class="icon">📝</span>
+                    <span class="label">Test Yap</span>
+                </button>
+
+                <button class="nav-btn" onclick="switchPage('home')">
                     <!-- Home Icon -->
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
@@ -35,10 +40,16 @@
                     <span>Keşfet</span>
                 </button>
 
-                <button class="nav-btn" onclick="switchPage('test')">
-                    <span class="icon">📝</span>
-                    <span class="label">Test Yap</span>
+                <button class="nav-btn" onclick="switchPage('theory')">
+                    <span class="icon">🧬</span>
+                    <span class="label">Teoriler</span>
                 </button>
+
+                <button class="nav-btn" onclick="switchPage('game')">
+                    <span class="icon">🕵️‍♂️</span>
+                    <span class="label">Oyun</span>
+                </button>
+
                 <button class="nav-btn" onclick="switchPage('about')">
                     <span class="icon">ℹ️</span>
                     <span class="label">Nedir?</span>
@@ -60,8 +71,40 @@
                 <span class="mobile-logo-text">Enneagram</span>
             </div>
 
-            <!-- SAYFA 1: TİPLER (HOME) -->
-            <div id="home-page" class="page-view active">
+            <!-- SAYFA 1: TEST (ANA SAYFA) -->
+            <div id="test-page" class="page-view active">
+                <div class="test-container-page">
+                    <header>
+                        <div>
+                            <h1>Kişilik Testi</h1>
+                            <p class="subtitle">Tipini Keşfet</p>
+                        </div>
+                    </header>
+
+                    <div id="quizStartView">
+                        <div class="test-intro-card">
+                            <h2>Kendini Tanıma Yolculuğu</h2>
+                            <p>Bu kısa test, Enneagram tipini bulmana yardımcı olacak. Başlamadan önce seni tanımak
+                                isteriz.</p>
+
+                            <input type="text" id="userName" placeholder="Adın veya lakabın..." class="name-input"
+                                autocomplete="off">
+
+                            <button class="btn-primary" onclick="startTest()">Testi Başlat</button>
+                        </div>
+                    </div>
+
+                    <div id="quizActiveView" style="display: none;">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill"></div>
+                        </div>
+                        <div id="quizContent"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SAYFA 2: TİPLER (KEŞFET) -->
+            <div id="home-page" class="page-view">
                 <header>
                     <div>
                         <h1>Enneagram</h1>
@@ -74,7 +117,114 @@
                 </div>
             </div>
 
-            <!-- SAYFA 3: NEDİR? (ABOUT) -->
+            <!-- SAYFA 3: TEORİLER -->
+            <div id="theory-page" class="page-view">
+                <div class="about-container">
+                    <header>
+                        <h1>Enneagram Teorileri</h1>
+                        <p class="subtitle">Derinlemesine Analiz</p>
+                    </header>
+
+                    <!-- TAB MENÜSÜ -->
+                    <div class="theory-tabs">
+                        <button class="theory-tab-btn active" onclick="switchTheoryTab('wing')">🪽 Kanat
+                            Teorisi</button>
+                        <button class="theory-tab-btn" onclick="switchTheoryTab('tritype')">🧠 Tritype Teorisi</button>
+                    </div>
+
+                    <div class="about-content">
+
+                        <!-- TAB 1: KANAT TEORİSİ (JS ile doldurulacak) -->
+                        <div id="wing-theory-content" class="theory-content active">
+                            <!-- JS buraya detaylı kanatları basacak -->
+                        </div>
+
+                        <!-- TAB 2: TRITYPE TEORİSİ -->
+                        <div id="tritype-theory-content" class="theory-content" style="display: none;">
+                            <section>
+                                <p style="margin-bottom: 25px;">
+                                    İnsan kişiliği tek bir merkezle sınırlı değildir. <strong>Tritype teorisine</strong>
+                                    göre, her insan <strong>üç farklı zeka merkezinden</strong> (Zihin, Kalp, Beden)
+                                    birer baskın tipe sahiptir. Aşağıda bilinen 27 Tritype Arketipi detaylandırılmıştır.
+                                </p>
+
+                                <div
+                                    style="background: rgba(231, 111, 81, 0.1); border-left: 4px solid #E76F51; padding: 15px; border-radius: 8px; margin-bottom: 30px;">
+                                    <h4 style="color: #E76F51; margin-bottom: 8px;">🤔 Sıralama Önemli mi?</h4>
+                                    <p style="font-size: 0.95rem; color: #e2e8f0; margin-bottom: 0;">
+                                        <strong>Evet ve Hayır.</strong> Arketip (örneğin "Çözüm Odaklı") değişmez, ancak
+                                        ilk sıradaki rakam sizin <strong>Ana Tipinizi (Kaptanı)</strong> belirler.
+                                        <br><br>
+                                        Örnek: <strong>3-5-8</strong> (Ana tip 3) ile <strong>8-3-5</strong> (Ana tip 8)
+                                        aynı arketipe sahiptir, ancak biri başarı odaklıyken diğeri güç odaklıdır.
+                                    </p>
+                                </div>
+
+                                <div id="tritype-grid" class="wing-sub-grid">
+                                    <!-- JS ile doldurulacak -->
+                                </div>
+                            </section>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- SAYFA 4: OYUN (TİP DEDEKTİFİ) -->
+            <div id="game-page" class="page-view">
+                <div class="game-wrapper">
+
+                    <!-- 1. Giriş Ekranı -->
+                    <div id="game-intro" class="game-container text-center">
+                        <div class="game-icon">🕵️‍♂️</div>
+                        <h1>Enneagram Dedektifi</h1>
+                        <p class="game-subtitle">İpuçlarını oku, tipi tahmin et!</p>
+                        <p class="game-desc">Kişilik tiplerinin gizli itiraflarını duyacaksın. Bakalım hangisinin hangi
+                            tipe ait olduğunu bulabilecek misin?</p>
+                        <button class="btn-primary" onclick="startGame()"
+                            style="font-size: 1.2rem; padding: 15px 40px; margin-top: 20px;">Oyuna Başla 🎮</button>
+                    </div>
+
+                    <!-- 2. Oyun Alanı -->
+                    <div id="game-area" class="game-container" style="display: none;">
+                        <div class="game-header-top">
+                            <div class="score-badge">Puan: <span id="currentScore">0</span></div>
+                            <div class="timer-badge">Soru: <span id="currentQuestionNum">1</span>/10</div>
+                        </div>
+
+                        <div class="card question-card-game">
+                            <div class="quote-icon">❝</div>
+                            <p id="gameQuestionText">Buraya soru gelecek...</p>
+                        </div>
+
+                        <div id="gameOptions" class="options-grid-game">
+                            <!-- Şıklar buraya JS ile gelecek -->
+                        </div>
+
+                        <div id="gameFeedback" class="feedback-msg" style="display: none;"></div>
+                        <button id="nextQuestionBtn" class="btn-primary"
+                            style="display: none; width: 100%; margin-top: 20px;" onclick="nextGameQuestion()">Sonraki
+                            Soru ➡️</button>
+                    </div>
+
+                    <!-- 3. Sonuç Ekranı -->
+                    <div id="game-result" class="game-container text-center" style="display: none;">
+                        <div class="game-icon">🏆</div>
+                        <h2>Oyun Bitti!</h2>
+                        <p class="final-score-text">Toplam Puanın:</p>
+                        <div class="final-score" id="totalScore">0</div>
+                        <p id="scoreComment" class="score-comment">Harika iş!</p>
+
+                        <div class="result-actions">
+                            <button class="btn-primary" onclick="startGame()">Tekrar Oyna 🔄</button>
+                            <button class="nav-btn-game" onclick="switchPage('test')">Testi Çöz 📝</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- SAYFA 5: NEDİR? (ABOUT) -->
             <div id="about-page" class="page-view">
                 <div class="about-container">
                     <header>
@@ -124,37 +274,7 @@
                 </div>
             </div>
 
-            <!-- SAYFA 2: TEST -->
-            <div id="test-page" class="page-view">
-                <div class="test-container-page">
-                    <header>
-                        <div>
-                            <h1>Kişilik Testi</h1>
-                            <p class="subtitle">Tipini Keşfet</p>
-                        </div>
-                    </header>
 
-                    <div id="quizStartView">
-                        <div class="test-intro-card">
-                            <h2>Kendini Tanıma Yolculuğu</h2>
-                            <p>Bu kısa test, Enneagram tipini bulmana yardımcı olacak. Başlamadan önce seni tanımak
-                                isteriz.</p>
-
-                            <input type="text" id="userName" placeholder="Adın veya lakabın..." class="name-input"
-                                autocomplete="off">
-
-                            <button class="btn-primary" onclick="startTest()">Testi Başlat</button>
-                        </div>
-                    </div>
-
-                    <div id="quizActiveView" style="display: none;">
-                        <div class="progress-bar">
-                            <div class="progress-fill" id="progressFill"></div>
-                        </div>
-                        <div id="quizContent"></div>
-                    </div>
-                </div>
-            </div>
 
         </div>
 

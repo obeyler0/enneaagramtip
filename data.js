@@ -163,4 +163,156 @@ const enneagramData = [
     }
 ];
 
+// --- DETAYLI KANAT (WING) VERİLERİ ---
+const wingsData = {
+    1: {
+        w9: {
+            title: "1w9: İdealist",
+            desc: "Tip 1'in mükemmeliyetçiliği, Tip 9'un sakinliği ile yumuşar. Daha içe dönük, sakin, gözlemci ve nesneldirler.",
+            traits: ["Daha sakin ve ağırbaşlı", "Öfkeyi daha az belli eden", "Doğaya düşkün", "Yargılamadan önce düşünen"]
+        },
+        w2: {
+            title: "1w2: Savunucu",
+            desc: "Tip 1'in prensipleri, Tip 2'nin yardımseverliği ile birleşir. Daha dışa dönük, insan odaklı, sıcakkanlı ama öğretici bir yapıdadırlar.",
+            traits: ["Daha aktif ve sosyal", "Fedakar ve koruyucu", "İkna kabiliyeti yüksek", "Dünyayı 'düzelterek' yardım eden"]
+        }
+    },
+    2: {
+        w1: {
+            title: "2w1: Hizmetkar",
+            desc: "Tip 2'nin sevgisi, Tip 1'in ahlaki değerleriyle birleşir. 'Doğru olanı' yapmak için yardım ederler, görev bilinci yüksektir.",
+            traits: ["Ciddi ve prensipli", "Vicdanlı ve özverili", "Kendini eleştiren", "Sorumluluk sahibi"]
+        },
+        w3: {
+            title: "2w3: Ev Sahibi",
+            desc: "Tip 2'nin ilişki odağı, Tip 3'ün hırsı ve cazibesiyle birleşir. Sosyal, enerjik, başarıyı seven ve etkileyici kişilerdir.",
+            traits: ["Dışa dönük ve popüler", "Hırslı ve hedef odaklı", "İmajına önem veren", "Organizasyon yeteneği yüksek"]
+        }
+    },
+    3: {
+        w2: {
+            title: "3w2: Yıldız",
+            desc: "Tip 3'ün başarısı, Tip 2'nin sıcaklığıyla harmanlanır. İnsanları etkilemeyi seven, büyüleyici, popüler ve yardımsever liderlerdir.",
+            traits: ["Karizmatik ve sevecen", "İnsanları motive eden", "İlişki odaklı başarı", "Sahne ışığını seven"]
+        },
+        w4: {
+            title: "3w4: Profesyonel",
+            desc: "Tip 3'ün çalışma azmi, Tip 4'ün sanatsal ve derinliğiyle birleşir. Daha ciddi, işine odaklı, estetik zevki yüksek ve biraz mesafelidirler.",
+            traits: ["Sanatsal ve yaratıcı", "İşkolik ve mükemmeliyetçi", "Daha içe dönük ve ciddi", "Özgün başarı peşinde"]
+        }
+    },
+    4: {
+        w3: {
+            title: "4w3: Aristokrat",
+            desc: "Tip 4'ün özgünlüğü, Tip 3'ün başarı isteğiyle birleşir. Yaratıcılıklarını dünyaya sunmak ve takdir görmek isterler. Daha üretken ve sosyaldirler.",
+            traits: ["Dışa dönük ve hırslı", "Estetik ve şık", "Duygularını sanata döken", "Rekabetçi ve seçkin"]
+        },
+        w5: {
+            title: "4w5: Bohem",
+            desc: "Tip 4'ün derinliği, Tip 5'in entelektüelliğiyle birleşir. Kendi iç dünyalarında yaşayan, gizemli, felsefi ve sıra dışı kişilerdir.",
+            traits: ["İçe dönük ve münzevi", "Entelektüel ve araştırmacı", "Geleneklere aykırı", "Derin analiz yeteneği"]
+        }
+    },
+    5: {
+        w4: {
+            title: "5w4: İkonoklast",
+            desc: "Tip 5'in bilgeliği, Tip 4'ün sezgileriyle birleşir. Bilim ve sanatı birleştiren, hayal gücü geniş, yaratıcı ve bağımsız düşünürlerdir.",
+            traits: ["Yaratıcı ve vizyoner", "Duygusal ama gizleyen", "Sıra dışı ilgi alanları", "Bağımsız ve özgün"]
+        },
+        w6: {
+            title: "5w6: Problem Çözücü",
+            desc: "Tip 5'in analitik zekası, Tip 6'nın sadakati ve pratikliğiyle birleşir. Olaylara mühendis gibi yaklaşan, işbirlikçi ve mantıklı kişilerdir.",
+            traits: ["Sadık ve çalışkan", "Teknik ve detaycı", "Gözlemci ve temkinli", "Takım çalışmasına yatkın"]
+        }
+    },
+    6: {
+        w5: {
+            title: "6w5: Savunucu",
+            desc: "Tip 6'nın güven ihtiyacı, Tip 5'in bilgi odağıyla birleşir. Ciddi, bağımsız, sistemleri analiz eden ve tehlikeleri önceden gören stratejistlerdir.",
+            traits: ["Ciddi ve entelektüel", "Yalnızlığı seven", "Stratejik planlama", "Kendi kendine yeten"]
+        },
+        w7: {
+            title: "6w7: Dost",
+            desc: "Tip 6'nın sadakati, Tip 7'nin neşesiyle birleşir. Sosyal, eğlenceli, şakacı ama içten içe endişeli ve güvence arayan kişilerdir.",
+            traits: ["Sosyal ve konuşkan", "Mizah yeteneği güçlü", "Enerjik ama kaygılı", "Grup aktivitelerini seven"]
+        }
+    },
+    7: {
+        w6: {
+            title: "7w6: Eğlendirici",
+            desc: "Tip 7'nin maceracılığı, Tip 6'nın insan odaklılığıyla birleşir. Sadık, eğlenceli, ilişkilerine önem veren ve onay arayan, neşeli kişilerdir.",
+            traits: ["Sadık ve sevecen", "Sorumluluk sahibi eğlence", "İlişki odaklı", "Hızlı fikir değiştiren"]
+        },
+        w8: {
+            title: "7w8: Gerçekçi",
+            desc: "Tip 7'nin vizyonu, Tip 8'in gücüyle birleşir. Tuttuğunu koparan, lider ruhlu, dünyevi zevklere düşkün, cesur ve girişimci kişilerdir.",
+            traits: ["Lider ve baskın", "Pratik ve sonuç odaklı", "Cesur ve net", "Girişimci ruhlu"]
+        }
+    },
+    8: {
+        w7: {
+            title: "8w7: Bağımsız",
+            desc: "Tip 8'in gücü, Tip 7'nin enerjisiyle birleşir. Dışa dönük, risk almayı seven, karizmatik, vizyoner ve insanları peşinden sürükleyen liderlerdir.",
+            traits: ["Maceracı ve risk alan", "Enerjik ve konuşkan", "Girişimci ve vizyoner", "Keyfine düşkün"]
+        },
+        w9: {
+            title: "8w9: Ayı",
+            desc: "Tip 8'in koruyuculuğu, Tip 9'un sakinliğiyle birleşir. Sessiz ama çok güçlü, sabırlı, babacan/anaç ve güven veren 'gizli' liderlerdir.",
+            traits: ["Sakin ve güvenilir", "Sabırlı ama kararlı", "Koruyucu ve kapsayıcı", "Yavaş öfkelenen ama patlayan"]
+        }
+    },
+    9: {
+        w8: {
+            title: "9w8: Arabulucu",
+            desc: "Tip 9'un uyumu, Tip 8'in gücüyle birleşir. Sosyal, rahat, gerektiğinde inatçı ve öfkesini gösterebilen, 'rahat güç' sahibi kişilerdir.",
+            traits: ["Rahat ve dışa dönük", "İnatçı ve kararlı", "Çatışmayı yönetebilen", "Fiziksel zevklere düşkün"]
+        },
+        w1: {
+            title: "9w1: Hayalperest",
+            desc: "Tip 9'un idealizmi, Tip 1'in prensipleriyle birleşir. Düzenli, kontrollü, etik değerlere önem veren, nazik ve biraz daha mesafeli kişilerdir.",
+            traits: ["İdealist ve düzenli", "Nazik ve mesafeli", "Ahlaki değerlere bağlı", "Hayal dünyası geniş"]
+        }
+    }
+};
+
+// --- TRITYPE (27 ARKETİP) VERİLERİ ---
+// --- TRITYPE (27 ARKETİP) VERİLERİ ---
+const tritypeData = {
+    // 1 Öncüllü
+    "125": { title: "1-2-5: Mentor", desc: "Bilge, yardımsever ve düzenli. (Kapsar: 125, 152, 215, 251, 512, 521). İnsanlara rehberlik etmeyi ve doğru bilgiyi paylaşmayı severler." },
+    "126": { title: "1-2-6: Destekçi", desc: "Sorumluluk sahibi, sadık ve yardımsever. (Kapsar: 126, 162, 216, 261, 612, 621). İnsanların ihtiyaçlarını karşılamak için kurallara uyarlar." },
+    "127": { title: "1-2-7: Öğretmen", desc: "İlham verici, neşeli ama disiplinli. (Kapsar: 127, 172, 217, 271, 712, 721). Öğretmeyi ve başkalarını geliştirmeyi severler." },
+    "135": { title: "1-3-5: Teknik Uzman", desc: "Çalışkan, odaklanmış ve rasyonel. (Kapsar: 135, 153, 315, 351, 513, 531). Detaylara hakim, mükemmeliyetçi ve başarı odaklıdırlar." },
+    "136": { title: "1-3-6: Görev İnsanı", desc: "Verimli, sadık ve prensipli. (Kapsar: 136, 163, 316, 361, 613, 631). Organizasyonların bel kemiğidirler, hatasız iş yapmaya çalışırlar." },
+    "137": { title: "1-3-7: Sistem Mimarı", desc: "Hırslı, yenilikçi ve mükemmeliyetçi. (Kapsar: 137, 173, 317, 371, 713, 731). Vizyoner projeler üretir ve hayata geçirirler." },
+    "145": { title: "1-4-5: Araştırmacı", desc: "Entelektüel, sezgisel ve analitik. (Kapsar: 145, 154, 415, 451, 514, 541). Derin bilgiye ulaşmayı ve özgün teoriler üretmeyi severler." },
+    "146": { title: "1-4-6: Filozof", desc: "Sorgulayan, ahlaki değerlere önem veren ve sezgisel. (Kapsar: 146, 164, 416, 461, 614, 641). Doğruyu bulmak onlar için onur meselesidir." },
+    "147": { title: "1-4-7: Vizyoner", desc: "Yaratıcı, idealist ve enerjik. (Kapsar: 147, 174, 417, 471, 714, 741). Dünyayı güzelleştirmek için sıra dışı fikirler geliştirirler." },
+
+    // 2 Öncüllü
+    "258": { title: "2-5-8: Stratejist", desc: "İnsanları anlayan, koruyucu ve analitik. (Kapsar: 258, 285, 528, 582, 825, 852). Hem şefkatli hem de gerektiğinde sert bir lider olabilirler." },
+    "259": { title: "2-5-9: Problem Çözücü", desc: "Sakin, bilge ve nazik. (Kapsar: 259, 295, 529, 592, 925, 952). Çatışmalardan kaçınır ama insanların sorunlarına pratik çözümler bulurlar." },
+    "268": { title: "2-6-8: Kurtarıcı", desc: "Güçlü, koruyucu ve sadık. (Kapsar: 268, 286, 628, 682, 826, 862). Sevdikleri için her şeyi yaparlar, zor zamanların insanıdırlar." },
+    "269": { title: "2-6-9: İyi Samarit", desc: "Uyumlu, nazik ve yardımsever. (Kapsar: 269, 296, 629, 692, 926, 962). Herkesin iyiliğini ister, barışı korumak için çabalarlar." },
+    "278": { title: "2-7-8: Özgür Ruh", desc: "Neşeli, güçlü ve cömert. (Kapsar: 278, 287, 728, 782, 827, 872). Hayat dolu, yenilikçi ve insanları harekete geçiren liderlerdir." },
+    "279": { title: "2-7-9: Barış Elçisi", desc: "İyimser, rahat ve yardımsever. (Kapsar: 279, 297, 729, 792, 927, 972). Ortama neşe katar ve gerginlikleri yumuşatırlar." },
+
+    // 3 Öncüllü
+    "358": { title: "3-5-8 / 3-8-5: Çözüm Odaklı", desc: "<strong>Tritype 385</strong> olarak da bilinir. Hırslı, stratejik ve dominanttırlar. Duygusallığa yer vermeden hedefe kilitlenirler. Zorlukları birer bulmaca gibi çözerler. (Kapsar: 358, 385, 538, 583, 835, 853)" },
+    "359": { title: "3-5-9: Düşünür", desc: "Sakin, zeki ve uyumlu. (Kapsar: 359, 395, 539, 593, 935, 953). Başarıyı sessizce elde ederler, profesyonel ve objektiftirler." },
+    "368": { title: "3-6-8: Adalet Savaşçısı", desc: "Cesur, tartışmacı ve sadık. (Kapsar: 368, 386, 638, 683, 836, 863). İnandıkları dava uğruna savaşır ve sözlerini sakınmazlar." },
+    "369": { title: "3-6-9: Arabulucu", desc: "Uyumlu, çalışkan ve toplumsal. (Kapsar: 369, 396, 639, 693, 936, 963). Grup içinde dengeyi sağlar ve ortak başarı için çalışırlar." },
+    "378": { title: "3-7-8: Güç Simsarı", desc: "Enerjik, iddialı ve vizyoner. (Kapsar: 378, 387, 738, 783, 837, 873). Büyük oynamayı severler, risk almaktan korkmazlar." },
+    "379": { title: "3-7-9: Elçi", desc: "Pozitif, diplomatik ve üretken. (Kapsar: 379, 397, 739, 793, 937, 973). İnsanları motive eder ve pürüzsüz ilişkiler kurarlar." },
+
+    // 4 Öncüllü
+    "458": { title: "4-5-8: Bilge", desc: "Gizemli, güçlü ve derin. (Kapsar: 458, 485, 548, 584, 845, 854). Kendi yollarını çizerler, sıradanlıktan ve yüzeysellikten nefret ederler." },
+    "459": { title: "4-5-9: Dalgın", desc: "İçe dönük, sezgisel ve sakin. (Kapsar: 459, 495, 549, 594, 945, 954). Kendi dünyalarında yaşarlar, derin düşüncelere ve hayallere sahiptirler." },
+    "468": { title: "4-6-8: Gerçekçi", desc: "Yoğun, reaktif ve sözünü sakınmayan. (Kapsar: 468, 486, 648, 684, 846, 864). Gerçeği, ne kadar acı olursa olsun ortaya çıkarmak isterler." },
+    "469": { title: "4-6-9: Arayışçı", desc: "Duygusal, şüpheci ve uyumlu. (Kapsar: 469, 496, 649, 694, 946, 964). Kimliklerini ve güvenli limanlarını ararlar, derin bağlar kurarlar." },
+    "478": { title: "4-7-8: Haberci", desc: "Yaratıcı, yenilikçi ve direkt. (Kapsar: 478, 487, 748, 784, 847, 874). Sıra dışı mesajlarını dünyaya duyurmak isterler, etkileyicidirler." },
+    "479": { title: "4-7-9: Peri Masalı", desc: "Nazik, yaratıcı ve iyimser. (Kapsar: 479, 497, 749, 794, 947, 974). Dünyadaki güzellikleri görmeyi ve büyülü bir atmosfer yaratmayı severler." }
+};
+
+
 

@@ -331,21 +331,29 @@ function switchPage(pageName, fromHistory = false) {
     const buttons = document.querySelectorAll('.nav-btn');
     buttons.forEach(btn => btn.classList.remove('active'));
 
-    if (pageName === 'home') buttons[0].classList.add('active');
-    if (pageName === 'test') buttons[1].classList.add('active');
-    if (pageName === 'about') buttons[2].classList.add('active');
+    if (pageName === 'test') { if (buttons[0]) buttons[0].classList.add('active'); }
+    else if (pageName === 'home') { if (buttons[1]) buttons[1].classList.add('active'); }
+    else if (pageName === 'theory') { if (buttons[2]) buttons[2].classList.add('active'); }
+    else if (pageName === 'game') { if (buttons[3]) buttons[3].classList.add('active'); }
+    else if (pageName === 'about') { if (buttons[4]) buttons[4].classList.add('active'); }
 
     // 2. Update Views
     document.querySelectorAll('.page-view').forEach(view => {
         view.classList.remove('active');
     });
 
-    if (pageName === 'home') {
-        document.getElementById('home-page').classList.add('active');
-    } else if (pageName === 'test') {
-        document.getElementById('test-page').classList.add('active');
-    } else if (pageName === 'about') {
-        document.getElementById('about-page').classList.add('active');
+    const pageMap = {
+        'test': 'test-page',
+        'home': 'home-page',
+        'theory': 'theory-page',
+        'game': 'game-page',
+        'about': 'about-page'
+    };
+
+    const targetId = pageMap[pageName];
+    if (targetId) {
+        const targetEl = document.getElementById(targetId);
+        if (targetEl) targetEl.classList.add('active');
     }
 
     // Test reset logic
@@ -658,9 +666,11 @@ function closeTest() {
 // Başlat
 document.addEventListener('DOMContentLoaded', () => {
     renderCards();
+    renderWingTheory(); // Wing Teorisini Yükle
+    renderTritypeTheory(); // Tritype Teorisini Yükle
 
-    // Uygulama yüklendiğinde Home state'i işle
-    window.history.replaceState({ page: 'home' }, '', '#home');
+    // Uygulama yüklendiğinde Test state'i işle (Ana sayfa artık test)
+    window.history.replaceState({ page: 'test' }, '', '#test');
 
     // --- GERİ TUŞU YÖNETİMİ (GLOBAL) ---
     window.onpopstate = function (event) {
@@ -682,8 +692,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (event.state && event.state.page) {
             switchPage(event.state.page, true);
         } else {
-            // State yoksa varsayılan home
-            switchPage('home', true);
+            // State yoksa varsayılan test
+            switchPage('test', true);
         }
     };
 });
@@ -755,6 +765,13 @@ function calculateResultsAdvanced() {
     else if (repeatRatio > 0.75) consistencyScore = Math.min(consistencyScore, 20);
     else if (repeatRatio > 0.60) consistencyScore = Math.min(consistencyScore, 45);
 
+    // --- KANAT VE TRITYPE HESAPLAMA ---
+    const wingData = calculateWing(bestType, typeScores);
+    const tritypeData = calculateTritype(typeScores);
+
+    console.log("Wing:", wingData);
+    console.log("Tritype:", tritypeData);
+
     // Sonucu Göster (Güvenlik Kontrollü)
     setTimeout(() => {
         // GÜVENLİK KONTROLÜ: Eğer tutarlılık çok düşükse (%40 altı) sonucu gösterme!
@@ -789,6 +806,46 @@ function calculateResultsAdvanced() {
                     </div>
                 `;
                 title.parentNode.insertBefore(metaDiv, title);
+
+                // --- KANAT VE TRITYPE GÖSTERİMİ ---
+                document.querySelectorAll('.advanced-analysis').forEach(e => e.remove());
+
+                const analysisDiv = document.createElement('div');
+                analysisDiv.className = 'advanced-analysis';
+                analysisDiv.style.marginTop = '20px';
+                analysisDiv.style.marginBottom = '20px';
+                analysisDiv.style.background = 'rgba(255,255,255,0.05)';
+                analysisDiv.style.padding = '15px';
+                analysisDiv.style.borderRadius = '12px';
+                analysisDiv.style.border = '1px solid rgba(255,255,255,0.1)';
+
+                analysisDiv.innerHTML = `
+                    <h3 style="color:#fff; margin-bottom:15px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:10px;">🧬 Detaylı Kişilik Analizi</h3>
+                    
+                    <!-- KANAT -->
+                    <div style="margin-bottom:15px;">
+                        <div style="font-size:0.9rem; color:#A8DADC;">🪽 Kanat (Wing)</div>
+                        <div style="font-size:1.4rem; font-weight:bold; color:#fff;">
+                            ${wingData.code}
+                        </div>
+                        <div style="font-size:0.9rem; color:#cbd5e1; margin-top:5px;">${wingData.desc}</div>
+                    </div>
+
+                    <!-- TRITYPE -->
+                    <div>
+                        <div style="font-size:0.9rem; color:#A8DADC;">🧠 Üçlü Arketipler (Tritype)</div>
+                        <div style="font-size:1.2rem; font-weight:bold; color:#fff; margin-top:5px;">
+                            ${tritypeData.code}
+                        </div>
+                        <div style="display:flex; gap:10px; margin-top:10px; flex-wrap:wrap;">
+                            <span class="feature-tag" style="background:#264653">🧠 ${tritypeData.head}</span>
+                            <span class="feature-tag" style="background:#E76F51">❤️ ${tritypeData.heart}</span>
+                            <span class="feature-tag" style="background:#2A9D8F">💪 ${tritypeData.gut}</span>
+                        </div>
+                    </div>
+                `;
+
+                title.parentNode.insertBefore(analysisDiv, title.nextSibling);
             }
         }
     }, 500);
@@ -1119,3 +1176,234 @@ function calculateTritype(scores) {
         head: "Zihin: Tip " + bestHead
     };
 }
+
+// --- THEORY SAYFASI FONKSİYONLARI ---
+
+// Tab Değiştirme
+function switchTheoryTab(tabName) {
+    // Butonları güncelle
+    const buttons = document.querySelectorAll('.theory-tab-btn');
+    buttons.forEach(btn => btn.classList.remove('active'));
+
+    // İçerikleri güncelle
+    const contents = document.querySelectorAll('.theory-content');
+    contents.forEach(content => content.style.display = 'none');
+
+    if (tabName === 'wing') {
+        buttons[0].classList.add('active');
+        document.getElementById('wing-theory-content').style.display = 'block';
+    } else {
+        buttons[1].classList.add('active');
+        document.getElementById('tritype-theory-content').style.display = 'block';
+    }
+}
+
+// Wing Teorisini Render Et
+function renderWingTheory() {
+    const container = document.getElementById('wing-theory-content');
+    if (!container) return;
+
+    // Temizle (tekrar render edilirse duplicate olmasın)
+    container.innerHTML = '';
+
+    // data.js'den wingsData'yı alıp döngüye sokacağız
+    // wingsData'nın varlığını kontrol et
+    if (typeof wingsData === 'undefined') {
+        container.innerHTML = '<p>Veri yüklenemedi.</p>';
+        return;
+    }
+
+    // 1'den 9'a kadar
+    for (let i = 1; i <= 9; i++) {
+        const typeWings = wingsData[i];
+        if (!typeWings) continue;
+
+        const mainType = enneagramData.find(d => d.id === i);
+
+        // Ana Container
+        const section = document.createElement('div');
+        section.className = 'wing-card-container';
+
+        // Başlık (Tip Adı)
+        let html = `
+            <div class="wing-header">
+                <span class="wing-badge" style="color: ${mainType ? mainType.color : '#fff'}">Tip ${i}</span>
+                <h3 style="margin:0; font-size:1.3rem; color:#fff;">${mainType ? mainType.title.split(':')[1] : ('Tip ' + i)}</h3>
+            </div>
+            <div class="wing-sub-grid">
+        `;
+
+        // Kanatları Ekle
+        Object.keys(typeWings).forEach(wingKey => {
+            const wing = typeWings[wingKey];
+            const traitList = wing.traits.map(t => `<li>${t}</li>`).join('');
+
+            html += `
+                <div class="wing-detail-card">
+                    <div class="wing-detail-title">${wing.title}</div>
+                    <p style="font-size: 0.9rem; color: #cbd5e1; line-height: 1.4;">${wing.desc}</p>
+                    <ul class="wing-trait-list">
+                        ${traitList}
+                    </ul>
+                </div>
+            `;
+        });
+
+        html += `</div>`; // Grid Kapat
+        section.innerHTML = html;
+        container.appendChild(section);
+    }
+}
+
+// Tritype Teorisini Render Et
+function renderTritypeTheory() {
+    const container = document.getElementById('tritype-grid');
+    if (!container) return;
+
+    container.innerHTML = '';
+
+    if (typeof tritypeData === 'undefined') {
+        container.innerHTML = '<p>Veri yüklenemedi.</p>';
+        return;
+    }
+
+    Object.keys(tritypeData).forEach(code => {
+        const t = tritypeData[code];
+
+        // Kart HTML
+        const card = document.createElement('div');
+        card.className = 'wing-detail-card';
+        card.style.borderColor = "rgba(231, 111, 81, 0.3)"; // Tritype rengi
+
+        card.innerHTML = `
+            <div class="wing-detail-title" style="color: #E76F51;">
+                ${t.title}
+            </div>
+            <p style="font-size: 0.9rem; color: #cbd5e1; line-height: 1.4;">${t.desc}</p>
+        `;
+
+        container.appendChild(card);
+    });
+}
+
+// Global scope'a ekle
+window.switchTheoryTab = switchTheoryTab;
+window.renderWingTheory = renderWingTheory;
+window.renderTritypeTheory = renderTritypeTheory;
+
+
+/* --- OYUN: TİP DEDEKTİFİ --- */
+const gameQuestions = [
+    { text: "Her şeyin mükemmel ve hatasız olması benim için çok önemlidir.", correct: 1, options: [1, 7, 9], feedback: "Tip 1 (Mükemmeliyetçi): Hata yapmaktan çok korkarlar." },
+    { text: "İnsanların bana ihtiyaç duymasını severim, hayır demekte zorlanırım.", correct: 2, options: [2, 5, 8], feedback: "Tip 2 (Yardımsever): Sevilmek için hizmet ederler." },
+    { text: "Başarılı olmak ve takdir edilmek en büyük motivasyonumdur.", correct: 3, options: [3, 4, 6], feedback: "Tip 3 (Başarı Odaklı): İmaj ve statü çok önemlidir." },
+    { text: "Kendimi bazen çok farklı ve anlaşılmaz hissediyorum.", correct: 4, options: [4, 9, 2], feedback: "Tip 4 (Bireyci): Özgün olmaya ve duygusal derinliğe önem verirler." },
+    { text: "Duygularımı göstermektense, olayları mantığımla analiz etmeyi tercih ederim.", correct: 5, options: [5, 2, 7], feedback: "Tip 5 (Araştırmacı): Bilgi toplayarak güvende hissederler." },
+    { text: "Her türlü ihtimali düşünürüm, bazen en kötüsüne hazırlıklı olurum.", correct: 6, options: [6, 1, 9], feedback: "Tip 6 (Sadık): Güvenlik ve kesinlik ararlar." },
+    { text: "Sıkılmaktan nefret ederim, sürekli yeni maceralar peşindeyim!", correct: 7, options: [7, 5, 4], feedback: "Tip 7 (Maceracı): Acıdan kaçmak için kendilerini meşgul ederler." },
+    { text: "Kontrolün elimde olması gerekir, zayıf görünmekten hiç hoşlanmam.", correct: 8, options: [8, 2, 6], feedback: "Tip 8 (Meydan Okuyan): Güçlü ve koruyucudurlar." },
+    { text: "Çatışmadan hiç hoşlanmam, huzurum bozulmasın yeter.", correct: 9, options: [9, 3, 8], feedback: "Tip 9 (Barışçı): Uyum ve sükuneti her şeye tercih ederler." },
+    { text: "Bir işe başlamadan önce tüm kuralları ve detayları bilmem gerekir.", correct: 6, options: [6, 8, 7], feedback: "Tip 6 (Sorgulayan): Belirsizlikten hoşlanmazlar." }
+];
+
+let currentGameScore = 0;
+let currentGameIndex = 0;
+
+function startGame() {
+    currentGameScore = 0;
+    currentGameIndex = -1; // İlk nextGameQuestion çağrısı ile 0 olacak
+    document.getElementById('currentScore').textContent = '0';
+    document.getElementById('game-intro').style.display = 'none';
+    document.getElementById('game-result').style.display = 'none';
+    document.getElementById('game-area').style.display = 'block';
+
+    // Karıştır
+    gameQuestions.sort(() => Math.random() - 0.5);
+
+    nextGameQuestion();
+}
+
+function nextGameQuestion() {
+    currentGameIndex++;
+
+    if (currentGameIndex >= gameQuestions.length) {
+        endGame();
+        return;
+    }
+
+    const q = gameQuestions[currentGameIndex];
+    document.getElementById('currentQuestionNum').textContent = currentGameIndex + 1;
+    document.getElementById('gameQuestionText').textContent = q.text;
+
+    // Feedback ve Next butonu gizle
+    document.getElementById('gameFeedback').style.display = 'none';
+    document.getElementById('nextQuestionBtn').style.display = 'none';
+
+    // Şıkları oluştur
+    const optionsDiv = document.getElementById('gameOptions');
+    optionsDiv.innerHTML = '';
+    optionsDiv.style.pointerEvents = 'auto'; // Tıklanabilir yap
+
+    // Şıkları karıştır (basitçe)
+    const currentOptions = [...q.options].sort(() => Math.random() - 0.5);
+
+    currentOptions.forEach(opt => {
+        const btn = document.createElement('div');
+        btn.className = 'game-option-btn';
+        btn.textContent = `Tip ${opt}`;
+
+        // Closure ile parametreleri sakla
+        btn.onclick = function () { checkGameAnswer(opt, q.correct, btn); };
+
+        optionsDiv.appendChild(btn);
+    });
+}
+
+function checkGameAnswer(selected, correct, btnElement) {
+    const optionsDiv = document.getElementById('gameOptions');
+    optionsDiv.style.pointerEvents = 'none'; // Tekrar tıklamayı engelle
+
+    const feedback = document.getElementById('gameFeedback');
+    const qData = gameQuestions[currentGameIndex];
+
+    // Şıkları boya
+    const allBtns = document.querySelectorAll('.game-option-btn');
+    allBtns.forEach(b => {
+        // Doğru şıkkı her zaman yeşile boya
+        if (b.textContent === `Tip ${correct}`) {
+            b.classList.add('correct');
+        }
+        // Yanlış şıkkı seçtiysek kırmızıya boya
+        else if (b === btnElement && selected !== correct) {
+            b.classList.add('wrong');
+        }
+    });
+
+    if (selected === correct) {
+        currentGameScore += 10;
+        document.getElementById('currentScore').textContent = currentGameScore;
+        feedback.className = 'feedback-msg correct';
+        feedback.innerHTML = `🎉 Doğru! <br><small>${qData.feedback}</small>`;
+    } else {
+        feedback.className = 'feedback-msg wrong';
+        feedback.innerHTML = `😕 Yanlış. <br><small>${qData.feedback}</small>`;
+    }
+
+    feedback.style.display = 'block';
+    document.getElementById('nextQuestionBtn').style.display = 'block';
+}
+
+function endGame() {
+    document.getElementById('game-area').style.display = 'none';
+    document.getElementById('game-result').style.display = 'block';
+    document.getElementById('totalScore').textContent = currentGameScore;
+
+    const comment = document.getElementById('scoreComment');
+    if (currentGameScore >= 80) comment.textContent = "🏆 İnanılmaz! Sen bir Enneagram Uzmanısın!";
+    else if (currentGameScore >= 50) comment.textContent = "👏 Gayet iyi! Biraz daha pratikle uzmanlaşabilirsin.";
+    else comment.textContent = "📚 Biraz daha çalışman lazım. 'Keşfet' bölümüne göz at!";
+}
+
+window.startGame = startGame;
+window.nextGameQuestion = nextGameQuestion;
+
