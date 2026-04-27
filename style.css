@@ -26,6 +26,8 @@ body {
     color: var(--text-primary);
     min-height: 100vh;
     overflow-x: hidden;
+    /* Mobilde pull-to-refresh yenilemesini engelle */
+    overscroll-behavior-y: contain;
 }
 
 /* --- LAYOUT & NAVIGATION --- */

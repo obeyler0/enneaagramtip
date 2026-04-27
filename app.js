@@ -585,21 +585,27 @@ document.addEventListener('DOMContentLoaded', () => {
     renderWingTheory(); // Wing Teorisini Yükle
     renderTritypeTheory(); // Tritype Teorisini Yükle
 
-    // Uygulama yüklendiğinde Test state'i işle (Ana sayfa artık test)
-    window.history.replaceState({ page: 'test' }, '', '#test');
+    // URL'deki hash'e göre başlangıç sayfasını belirle
+    const currentHash = window.location.hash.replace('#', '');
+    const validPages = ['test', 'home', 'theory', 'game', 'about'];
+    const startPage = validPages.includes(currentHash) ? currentHash : 'test';
+
+    // Uygulama yüklendiğinde doğru state'i işle
+    window.history.replaceState({ page: startPage }, '', '#' + startPage);
+    switchPage(startPage, true);
 
     // --- GERİ TUŞU YÖNETİMİ (GLOBAL) ---
     window.onpopstate = function (event) {
         // 1. Share Modal Açıksa?
         const shareOverlay = document.getElementById('shareOverlay');
-        if (shareOverlay.classList.contains('active')) {
-            closeShareCard(true); // true = history'den geldi, tekrar back yapma
+        if (shareOverlay && shareOverlay.classList.contains('active')) {
+            closeShareCard(true);
             return;
         }
 
         // 2. Detay Açıksa?
         const detailOverlay = document.getElementById('detailOverlay');
-        if (detailOverlay.classList.contains('active')) {
+        if (detailOverlay && detailOverlay.classList.contains('active')) {
             closeDetail(true);
             return;
         }
@@ -608,8 +614,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (event.state && event.state.page) {
             switchPage(event.state.page, true);
         } else {
-            // State yoksa varsayılan test
-            switchPage('test', true);
+            // Hash'e göre fallback yap
+            const hash = window.location.hash.replace('#', '');
+            switchPage(validPages.includes(hash) ? hash : 'test', true);
         }
     };
 });
