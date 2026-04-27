@@ -642,13 +642,14 @@ function calculateResultsAdvanced() {
         const posCount = answers.filter(x => x > 0).length;
         const negCount = answers.filter(x => x < 0).length;
 
+        // Çelişki cezası: *4 yerine *2 (daha esnek)
         if (posCount > 0 && negCount > 0) {
             const minSide = Math.min(posCount, negCount);
-            totalInconsistency += (minSide * 4);
+            totalInconsistency += (minSide * 2);
         }
 
         if (answers.includes(2) && answers.includes(-2)) {
-            totalInconsistency += 5;
+            totalInconsistency += 3; // Uç çelişki cezası 5'ten 3'e
         }
     }
 
@@ -662,15 +663,15 @@ function calculateResultsAdvanced() {
     conflicts.forEach(pair => {
         const score1 = typeScores[pair.t1] / 18;
         const score2 = typeScores[pair.t2] / 18;
-        if (score1 > 0.6 && score2 > 0.6) {
-            totalInconsistency += 15;
+        if (score1 > 0.7 && score2 > 0.7) { // Eşik 0.6'dan 0.7'ye (daha zor tetiklenir)
+            totalInconsistency += 10; // Ceza 15'ten 10'a
         }
     });
 
     // Puan
     let consistencyScore = Math.max(0, 100 - totalInconsistency);
 
-    // MONOTONLUK KONTROLÜ
+    // MONOTONLUK KONTROLÜ (Daha gerçekçi limitler)
     let counts = { '-2': 0, '-1': 0, '0': 0, '1': 0, '2': 0 };
     userAnswers.forEach(u => { counts[u.rawScore] = (counts[u.rawScore] || 0) + 1; });
 
@@ -679,9 +680,10 @@ function calculateResultsAdvanced() {
 
     const repeatRatio = maxRepeat / userAnswers.length;
 
-    if (repeatRatio > 0.95) consistencyScore = 0;
-    else if (repeatRatio > 0.75) consistencyScore = Math.min(consistencyScore, 20);
-    else if (repeatRatio > 0.60) consistencyScore = Math.min(consistencyScore, 45);
+    // Limitler esnetildi: %60 artık cezalandırılmıyor.
+    if (repeatRatio > 0.95) consistencyScore = 5;
+    else if (repeatRatio > 0.85) consistencyScore = Math.min(consistencyScore, 40);
+    else if (repeatRatio > 0.75) consistencyScore = Math.min(consistencyScore, 60);
 
     // --- KANAT VE TRITYPE HESAPLAMA ---
     const wingData = calculateWing(bestType, typeScores);
