@@ -571,91 +571,7 @@ function selectLikertOption(value) {
     }
 }
 
-// Sonuçları Hesapla
-function calculateAndShowResults() {
-    const progressFill = document.getElementById('progressFill');
-    progressFill.style.width = '100%';
 
-    // 1. Puanları Hesapla
-    let typeScores = {};
-    for (let i = 1; i <= 9; i++) typeScores[i] = 0;
-
-    userAnswers.forEach(ans => {
-        // Negatif puanları düşme, sadece topla. 
-        // Ama Enneagram'da yüksek puan o tipi gösterir.
-        // -2 verdiyse o tipten uzaklaşır.
-        typeScores[ans.target] += ans.score;
-    });
-
-    // 2. En Yüksek Puanı Bul
-    let maxScore = -100;
-    let bestType = 1;
-
-    // Puanları normalize et (Negatifleri sıfıra çekebiliriz veya olduğu gibi bırakabiliriz)
-    // Sıralama yap
-    const sortedTypes = Object.entries(typeScores).sort((a, b) => b[1] - a[1]);
-    bestType = sortedTypes[0][0];
-
-    // 3. Tutarlılık Analizi (Consistency Check)
-    let consistencyScore = 100;
-
-    // Soru 0 (Tip 1) vs Soru 18 (Tip 1 Reverse)
-    // Soru 0'a "Katılıyorum" (2), Soru 18'e "Katılıyorum" (2) dediyse -> Çelişki!
-    // Soru 0: Hata rahatsız eder. Soru 18: Rahatımdır.
-    // İkisine de katılıyorsa tutarlılık düşmeli.
-    const q1Ans = userAnswers.find(a => a.questionIndex === 0).rawScore;
-    const q19Ans = userAnswers.find(a => a.questionIndex === 18).rawScore;
-
-    // Aynı yönde cevap verdiyse (ikisi de pozitif veya ikisi de negatif) çelişki vardır çünkü biri ters soru.
-    if ((q1Ans > 0 && q19Ans > 0) || (q1Ans < 0 && q19Ans < 0)) {
-        consistencyScore -= 15;
-    }
-
-    // Soru 14 (Tip 8) vs Soru 19 (Tip 8) -> İkisi de düz soru.
-    // İkisine de zıt cevap verdiyse tutarlılık düşer.
-    const q14Ans = userAnswers.find(a => a.questionIndex === 14).rawScore; // 8. sorunun ilki
-    const q20Ans = userAnswers.find(a => a.questionIndex === 19).rawScore; // 8. sorunun ikincisi
-
-    if (Math.abs(q14Ans - q20Ans) > 2) { // Biri 2, biri -2 ise fark 4 -> Büyük çelişki
-        consistencyScore -= 15;
-    }
-
-    // Genel Varyans Kontrolü: Hep "Kararsızım" (0) seçildiyse?
-    const zeroCount = userAnswers.filter(a => a.rawScore === 0).length;
-    if (zeroCount > 10) consistencyScore -= 20; // 10'dan fazla kararsız
-
-    // Sonucu Göster
-    setTimeout(() => {
-        const typeData = enneagramData.find(t => t.id == bestType);
-        if (typeData) {
-            openDetail(typeData);
-
-            // Tutarlılık Mesajını Ekle
-            // Bunu detay modalının içine dinamik ekleyelim veya badge olarak
-            const title = document.querySelector('.detail-tagline');
-            if (title) {
-                // Temizlik
-                document.querySelectorAll('.result-meta').forEach(e => e.remove());
-
-                const metaDiv = document.createElement('div');
-                metaDiv.className = 'result-meta';
-                metaDiv.style.marginBottom = '15px';
-
-                let consistencyColor = '#4ade80'; // Yeşil
-                if (consistencyScore < 70) consistencyColor = '#facc15'; // Sarı
-                if (consistencyScore < 50) consistencyColor = '#f87171'; // Kırmızı
-
-                metaDiv.innerHTML = `
-                    <span class="result-badge">🎉 Senin Enneagram Tipin</span>
-                    <div style="margin-top:5px; font-size:0.8rem; color:${consistencyColor}; font-weight:bold;">
-                        ✅ Test Tutarlılık Oranı: %${consistencyScore}
-                    </div>
-                `;
-                title.parentNode.insertBefore(metaDiv, title);
-            }
-        }
-    }, 500);
-}
 
 function closeTest() {
     document.getElementById('quizStartView').style.display = 'block';
@@ -711,10 +627,10 @@ function calculateResultsAdvanced() {
         typeScores[ans.target] += ans.score;
     });
 
-    // 2. En Yüksek Puanı Bul
+    // 2. En Yüksek Puanı Bul (Number'a çevirerek type güvenliği sağla)
     let bestType = 1;
     const sortedTypes = Object.entries(typeScores).sort((a, b) => b[1] - a[1]);
-    bestType = sortedTypes[0][0];
+    bestType = Number(sortedTypes[0][0]);
 
     // 3. TUTARLILIK ANALİZİ (Tip İçi Çelişki)
     let totalInconsistency = 0;
@@ -737,13 +653,15 @@ function calculateResultsAdvanced() {
     }
 
     // 4. TIPLER ARASI ÇELİŞKİ ANALİZİ
+    // NOT: Komşu tipler (8-9, 1-9, 1-2 vb.) kanat olabileceğinden çelişki listesine alınmaz.
     const conflicts = [
-        { t1: 1, t2: 7 }, { t1: 8, t2: 9 }, { t1: 2, t2: 5 }, { t1: 6, t2: 7 }
+        { t1: 1, t2: 7 }, { t1: 2, t2: 5 }, { t1: 6, t2: 7 }
     ];
 
+    // Her tip için maks puan = 9 soru × 2 = 18. Bu yüzden bölücü /18 olmalı.
     conflicts.forEach(pair => {
-        const score1 = typeScores[pair.t1] / 9;
-        const score2 = typeScores[pair.t2] / 9;
+        const score1 = typeScores[pair.t1] / 18;
+        const score2 = typeScores[pair.t2] / 18;
         if (score1 > 0.6 && score2 > 0.6) {
             totalInconsistency += 15;
         }
@@ -897,222 +815,7 @@ function restartTest() {
     }, 300);
 }
 
-// --- GELİŞMİŞ HESAPLAMA (V2 - OLD) ---
-function calculateResultsAdvancedOLD() {
-    const progressFill = document.getElementById('progressFill');
-    progressFill.style.width = '100%';
-
-    // 1. Puanları Hesapla
-    let typeScores = {};
-    for (let i = 1; i <= 9; i++) typeScores[i] = 0;
-
-    userAnswers.forEach(ans => {
-        typeScores[ans.target] += ans.score;
-    });
-
-    // 2. En Yüksek Puanı Bul
-    let bestType = 1;
-    const sortedTypes = Object.entries(typeScores).sort((a, b) => b[1] - a[1]);
-    bestType = sortedTypes[0][0];
-
-    // 3. TUTARLILIK ANALİZİ (Tip İçi Çelişki)
-    let totalInconsistency = 0;
-
-    for (let i = 1; i <= 9; i++) {
-        // O tipe verilen cevapları filtrele (rawScore: -2, -1, 0, 1, 2)
-        const answers = userAnswers.filter(a => a.target === i).map(a => a.rawScore);
-
-        if (answers.length === 0) continue;
-
-        const posCount = answers.filter(x => x > 0).length;
-        const negCount = answers.filter(x => x < 0).length;
-
-        // Çelişki: Hem pozitif hem negatif cevaplar varsa
-        if (posCount > 0 && negCount > 0) {
-            const minSide = Math.min(posCount, negCount);
-            // Ceza: Azınlık tarafın sayısı * 4
-            totalInconsistency += (minSide * 4);
-        }
-
-        // Uç Çelişki: +2 ve -2 aynı anda varsa
-        if (answers.includes(2) && answers.includes(-2)) {
-            totalInconsistency += 5;
-        }
-    }
-
-    // --- 4. TİPLER ARASI ÇELİŞKİ ANALİZİ (KANAT VE TRITYPE UYUMLU) ---
-    // Eski algoritma Kanat ve Tritype'ı göz ardı ediyordu.
-    // Yeni mantık:
-    // - Komşu tipler (kanat olabilir) -> Çelişki YOK
-    // - Farklı merkezlerden tipler (tritype olabilir) -> Çelişki YOK
-    // - Aynı merkezde, komşu olmayan, 2+ tipe yüksek puan -> ŞÜPHELİ
-
-    const centers = {
-        gut: [8, 9, 1],    // Beden Merkezi
-        heart: [2, 3, 4],  // Kalp Merkezi
-        head: [5, 6, 7]    // Zihin Merkezi
-    };
-
-    // Komşuluk haritası (Enneagram dairesi)
-    const neighbors = {
-        1: [9, 2], 2: [1, 3], 3: [2, 4], 4: [3, 5], 5: [4, 6],
-        6: [5, 7], 7: [6, 8], 8: [7, 9], 9: [8, 1]
-    };
-
-    // Her merkezdeki yüksek puanlı tipleri say
-    for (let centerName in centers) {
-        const centerTypes = centers[centerName];
-        let highScoreCount = 0;
-        let highScoreTypes = [];
-
-        centerTypes.forEach(typeId => {
-            const avgScore = typeScores[typeId] / 9;
-            if (avgScore > 0.6) {
-                highScoreCount++;
-                highScoreTypes.push(typeId);
-            }
-        });
-
-        // Eğer aynı merkezde 2'den fazla tipe yüksek puan verdiyse
-        if (highScoreCount > 2) {
-            console.log(`Şüpheli: ${centerName} merkezinde ${highScoreCount} tipe yüksek puan (${highScoreTypes.join(', ')})`);
-            totalInconsistency += 10;
-        }
-
-        // Eğer tam 2 tipe yüksek puan verdiyse, komşu mu kontrol et
-        if (highScoreCount === 2) {
-            const [type1, type2] = highScoreTypes;
-            // Komşu değillerse şüpheli (çünkü kanat olamazlar)
-            if (!neighbors[type1].includes(type2)) {
-                console.log(`Şüpheli: ${centerName} merkezinde komşu olmayan ${type1} ve ${type2}'ye yüksek puan`);
-                totalInconsistency += 8;
-            }
-        }
-    }
-
-    // Puan: Maksimum 0'a kadar düşebilir
-    let consistencyScore = Math.max(0, 100 - totalInconsistency);
-
-    // --- MONOTONLUK KONTROLÜ (Tekdüzelik) ---
-    // Kullanıcı sürekli aynı butona mı basmış?
-    // Cevapların dağılımını say (-2, -1, 0, 1, 2)
-    let counts = { '-2': 0, '-1': 0, '0': 0, '1': 0, '2': 0 };
-    userAnswers.forEach(u => {
-        counts[u.rawScore] = (counts[u.rawScore] || 0) + 1;
-    });
-
-    const totalQuestions = userAnswers.length;
-    let maxRepeat = 0;
-    for (let key in counts) {
-        if (counts[key] > maxRepeat) maxRepeat = counts[key];
-    }
-
-    const repeatRatio = maxRepeat / totalQuestions;
-    // Örn: 81 sorunun 70'i aynı şıksa oran ~0.86
-
-    if (repeatRatio > 0.95) {
-        // %95'ten fazlası aynı şık (Neredeyse hepsi)
-        consistencyScore = 0;
-        console.log("Hile Tespiti: %95 Aynı Cevap");
-    } else if (repeatRatio > 0.75) {
-        // %75'ten fazlası aynı şık (Çok şüpheli)
-        consistencyScore = Math.min(consistencyScore, 20);
-        console.log("Hile Tespiti: %75 Aynı Cevap");
-    } else if (repeatRatio > 0.60) {
-        // %60'tan fazlası aynı şık (Şüpheli)
-        consistencyScore = Math.min(consistencyScore, 45);
-        console.log("Hile Tespiti: %60 Aynı Cevap");
-    }
-
-    // Varyans Kontrolü (Tamamen aynıysa - Yedek Kontrol)
-    const allRaw = userAnswers.map(u => u.rawScore);
-    const allSame = allRaw.every(val => val === allRaw[0]);
-    if (allSame) consistencyScore = 0;
-
-    console.log("Gelişmiş Tutarlılık Puanı:", consistencyScore);
-
-    // --- KANAT VE TRITYPE HESAPLAMA ---
-    const wingData = calculateWing(bestType, typeScores);
-    const tritypeData = calculateTritype(typeScores);
-
-    console.log("Wing:", wingData);
-    console.log("Tritype:", tritypeData);
-
-    // Sonucu Göster
-    setTimeout(() => {
-        const typeData = enneagramData.find(t => t.id == bestType);
-        if (typeData) {
-            openDetail(typeData);
-
-            // Tutarlılık Badge'ini Ekle
-            const title = document.querySelector('.detail-tagline');
-            if (title) {
-                document.querySelectorAll('.result-meta').forEach(e => e.remove());
-
-                const metaDiv = document.createElement('div');
-                metaDiv.className = 'result-meta';
-                metaDiv.style.marginBottom = '15px';
-
-                let color = '#4ade80';
-                let text = "Güvenilir Sonuç ✅";
-
-                if (consistencyScore < 70) { color = '#facc15'; text = "Orta Güvenilirlik ⚠️"; }
-                if (consistencyScore < 40) { color = '#f87171'; text = "Düşük Güvenilirlik (Rastgele?) ❌"; }
-
-                metaDiv.innerHTML = `
-                    <span class="result-badge">🎉 Senin Enneagram Tipin</span>
-                    <div style="margin-top:10px; padding:10px; background:rgba(0,0,0,0.2); border-radius:10px;">
-                        <div style="font-size:0.8rem; opacity:0.8;">Test Tutarlılığı</div>
-                        <div style="font-size:1.1rem; color:${color}; font-weight:bold;">
-                            %${consistencyScore} - ${text}
-                        </div>
-                    </div>
-                `;
-                title.parentNode.insertBefore(metaDiv, title);
-
-                // --- KANAT VE TRITYPE GÖSTERİMİ ---
-                document.querySelectorAll('.advanced-analysis').forEach(e => e.remove());
-
-                const analysisDiv = document.createElement('div');
-                analysisDiv.className = 'advanced-analysis';
-                analysisDiv.style.marginTop = '20px';
-                analysisDiv.style.marginBottom = '20px';
-                analysisDiv.style.background = 'rgba(255,255,255,0.05)';
-                analysisDiv.style.padding = '15px';
-                analysisDiv.style.borderRadius = '12px';
-                analysisDiv.style.border = '1px solid rgba(255,255,255,0.1)';
-
-                analysisDiv.innerHTML = `
-                    <h3 style="color:#fff; margin-bottom:15px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:10px;">🧬 Detaylı Kişilik Analizi</h3>
-                    
-                    <!-- KANAT -->
-                    <div style="margin-bottom:15px;">
-                        <div style="font-size:0.9rem; color:#A8DADC;">🪽 Kanat (Wing)</div>
-                        <div style="font-size:1.4rem; font-weight:bold; color:#fff;">
-                            ${wingData.code}
-                        </div>
-                        <div style="font-size:0.9rem; color:#cbd5e1; margin-top:5px;">${wingData.desc}</div>
-                    </div>
-
-                    <!-- TRITYPE -->
-                    <div>
-                        <div style="font-size:0.9rem; color:#A8DADC;">🧠 Üçlü Arketipler (Tritype)</div>
-                        <div style="font-size:1.2rem; font-weight:bold; color:#fff; margin-top:5px;">
-                            ${tritypeData.code}
-                        </div>
-                        <div style="display:flex; gap:10px; margin-top:10px; flex-wrap:wrap;">
-                            <span class="feature-tag" style="background:#264653">🧠 ${tritypeData.head}</span>
-                            <span class="feature-tag" style="background:#E76F51">❤️ ${tritypeData.heart}</span>
-                            <span class="feature-tag" style="background:#2A9D8F">💪 ${tritypeData.gut}</span>
-                        </div>
-                    </div>
-                `;
-
-                title.parentNode.insertBefore(analysisDiv, title.nextSibling);
-            }
-        }
-    }, 500);
-}
+// (calculateResultsAdvancedOLD kaldırıldı - Aktif V3 fonksiyonu yukarıda)
 
 // --- HELPER: KANAT HESAPLAMA ---
 function calculateWing(mainType, scores) {
