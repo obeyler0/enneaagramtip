@@ -40,19 +40,9 @@
                     <span>Keşfet</span>
                 </button>
 
-                <button class="nav-btn" onclick="switchPage('theory')">
-                    <span class="icon">🧬</span>
-                    <span class="label">Teoriler</span>
-                </button>
-
                 <button class="nav-btn" onclick="switchPage('game')">
                     <span class="icon">🕵️‍♂️</span>
                     <span class="label">Oyun</span>
-                </button>
-
-                <button class="nav-btn" onclick="switchPage('about')">
-                    <span class="icon">ℹ️</span>
-                    <span class="label">Nedir?</span>
                 </button>
             </div>
 
@@ -111,6 +101,14 @@
                         <p class="subtitle">Kişilik Tipleri Rehberi</p>
                     </div>
                 </header>
+
+                <div class="explore-intro-card" onclick="switchPage('about')">
+                    <div class="e-intro-content">
+                        <h2>Enneagram'ı Tanı 💡</h2>
+                        <p>Dokuz farklı kişilik tipinin derinliklerini ve sistemin mantığını keşfet.</p>
+                        <button class="btn-secondary-outline">Hemen Öğren</button>
+                    </div>
+                </div>
 
                 <div class="card-grid" id="cardGrid">
                     <!-- Kartlar JS ile buraya -->
@@ -269,6 +267,15 @@
                             <p>Enneagram sizi bir kalıba sokmaz, aksine içinde bulunduğunuz kalıpları fark etmenizi
                                 sağlar. Kendi "otomatik pilot" davranışlarınızı gördüğünüzde, onları yönetme ve
                                 dönüştürme şansı elde edersiniz.</p>
+                        </section>
+
+                        <section class="theories-redirect-box">
+                            <h3>Derine İn 🧬</h3>
+                            <p>Kanat (Wing) ve Üçlü Arketip (Tritype) teorileri hakkında detaylı bilgi edin.</p>
+                            <button class="btn-primary" onclick="switchPage('theory')"
+                                style="width: 100%; margin-top: 15px;">
+                                Teorileri İncele
+                            </button>
                         </section>
                     </div>
                 </div>
