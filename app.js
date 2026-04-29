@@ -588,7 +588,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // URL'deki hash'e göre başlangıç sayfasını belirle
     const currentHash = window.location.hash.replace('#', '');
     const validPages = ['test', 'home', 'theory', 'game', 'about'];
-    const startPage = validPages.includes(currentHash) ? currentHash : 'test';
+    const startPage = validPages.includes(currentHash) ? currentHash : 'home';
 
     // Uygulama yüklendiğinde doğru state'i işle
     window.history.replaceState({ page: startPage }, '', '#' + startPage);
@@ -616,7 +616,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             // Hash'e göre fallback yap
             const hash = window.location.hash.replace('#', '');
-            switchPage(validPages.includes(hash) ? hash : 'test', true);
+            switchPage(validPages.includes(hash) ? hash : 'home', true);
         }
     };
 });
