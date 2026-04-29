@@ -20,7 +20,7 @@
     <div id="layout">
         <!-- Sol Menü / Alt Menü (Mobile) -->
         <nav class="sidebar">
-            <div class="logo">
+            <div class="logo" onclick="adminClick()" style="cursor:pointer;" title="Enneagram">
                 <img src="logo.png" alt="Enneagram Logo" class="app-logo">
             </div>
 
@@ -56,7 +56,7 @@
         <div id="main-content">
 
             <!-- Mobile Top Bar (Logo) -->
-            <div class="mobile-top-bar">
+            <div class="mobile-top-bar" onclick="adminClick()">
                 <img src="logo.png" alt="E9" class="mobile-logo-img">
                 <span class="mobile-logo-text">Enneagram</span>
             </div>
@@ -112,6 +112,42 @@
 
                 <div class="card-grid" id="cardGrid">
                     <!-- Kartlar JS ile buraya -->
+                </div>
+
+                <!-- KAYNAKLAR BÖLÜMÜ -->
+                <div class="resources-section">
+                    <h3>📚 Derinlemesine Araştırma</h3>
+                    <p class="resources-desc">Enneagram hakkında daha fazla bilgi edinmek için faydalanabileceğin
+                        güvenilir kaynaklar:</p>
+
+                    <div class="resource-links">
+                        <a href="https://www.enneagraminstitute.com/" target="_blank" rel="noopener noreferrer"
+                            class="resource-card">
+                            <span class="r-icon">🌐</span>
+                            <div class="r-info">
+                                <strong>The Enneagram Institute</strong>
+                                <small>Dünya çapında en resmi ve köklü kurum (İngilizce).</small>
+                            </div>
+                        </a>
+
+                        <a href="https://oceanmoonshine9.wordpress.com/" target="_blank" rel="noopener noreferrer"
+                            class="resource-card">
+                            <span class="r-icon">📖</span>
+                            <div class="r-info">
+                                <strong>Ocean Moonshine</strong>
+                                <small>Tip kanatları, tritype ve temel korkular hakkında derin yazılar.</small>
+                            </div>
+                        </a>
+
+                        <a href="https://www.youtube.com/@twlahue" target="_blank" rel="noopener noreferrer"
+                            class="resource-card">
+                            <span class="r-icon">▶️</span>
+                            <div class="r-info">
+                                <strong>Dr. Tom LaHue</strong>
+                                <small>Tüm tipler hakkında gündelik örneklerle YouTube analizleri.</small>
+                            </div>
+                        </a>
+                    </div>
                 </div>
             </div>
 

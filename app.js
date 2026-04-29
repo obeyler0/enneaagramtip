@@ -699,6 +699,11 @@ function calculateResultsAdvanced() {
     console.log("Wing:", wingData);
     console.log("Tritype:", tritypeData);
 
+    // --- ANALITIK KAYIT / BACKGROUND DATA ---
+    if (typeof saveTestAnalytics === 'function') {
+        saveTestAnalytics(bestType, consistencyScore, typeScores, wingData, tritypeData);
+    }
+
     // Sonucu Göster (Güvenlik Kontrollü)
     setTimeout(() => {
         // GÜVENLİK KONTROLÜ: Eğer tutarlılık çok düşükse (%40 altı) sonucu gösterme!
@@ -1006,16 +1011,50 @@ window.renderTritypeTheory = renderTritypeTheory;
 
 /* --- OYUN: TİP DEDEKTİFİ --- */
 const gameQuestions = [
-    { text: "Her şeyin mükemmel ve hatasız olması benim için çok önemlidir.", correct: 1, options: [1, 7, 9], feedback: "Tip 1 (Mükemmeliyetçi): Hata yapmaktan çok korkarlar." },
-    { text: "İnsanların bana ihtiyaç duymasını severim, hayır demekte zorlanırım.", correct: 2, options: [2, 5, 8], feedback: "Tip 2 (Yardımsever): Sevilmek için hizmet ederler." },
-    { text: "Başarılı olmak ve takdir edilmek en büyük motivasyonumdur.", correct: 3, options: [3, 4, 6], feedback: "Tip 3 (Başarı Odaklı): İmaj ve statü çok önemlidir." },
-    { text: "Kendimi bazen çok farklı ve anlaşılmaz hissediyorum.", correct: 4, options: [4, 9, 2], feedback: "Tip 4 (Bireyci): Özgün olmaya ve duygusal derinliğe önem verirler." },
-    { text: "Duygularımı göstermektense, olayları mantığımla analiz etmeyi tercih ederim.", correct: 5, options: [5, 2, 7], feedback: "Tip 5 (Araştırmacı): Bilgi toplayarak güvende hissederler." },
-    { text: "Her türlü ihtimali düşünürüm, bazen en kötüsüne hazırlıklı olurum.", correct: 6, options: [6, 1, 9], feedback: "Tip 6 (Sadık): Güvenlik ve kesinlik ararlar." },
-    { text: "Sıkılmaktan nefret ederim, sürekli yeni maceralar peşindeyim!", correct: 7, options: [7, 5, 4], feedback: "Tip 7 (Maceracı): Acıdan kaçmak için kendilerini meşgul ederler." },
-    { text: "Kontrolün elimde olması gerekir, zayıf görünmekten hiç hoşlanmam.", correct: 8, options: [8, 2, 6], feedback: "Tip 8 (Meydan Okuyan): Güçlü ve koruyucudurlar." },
-    { text: "Çatışmadan hiç hoşlanmam, huzurum bozulmasın yeter.", correct: 9, options: [9, 3, 8], feedback: "Tip 9 (Barışçı): Uyum ve sükuneti her şeye tercih ederler." },
-    { text: "Bir işe başlamadan önce tüm kuralları ve detayları bilmem gerekir.", correct: 6, options: [6, 8, 7], feedback: "Tip 6 (Sorgulayan): Belirsizlikten hoşlanmazlar." }
+    // TİP 1
+    { text: "Her şeyin mükemmel ve hatasız olması takıntım yüzünden esnek olmakta çok zorlanıyorum.", correct: 1, options: [1, 7, 3], feedback: "Tip 1 (İdealist): Hata yapmaktan çok korkarlar, içsel eleştirmenleri çok acımasızdır." },
+    { text: "Dünyanın ahlaki olarak daha iyi bir yer olması için kendi arzularımı bastırmam gerektiğine inanırım.", correct: 1, options: [1, 8, 4], feedback: "Tip 1: Kendi duygularından çok 'doğru olana' (görev bilincine) odaklanırlar." },
+    { text: "Bir görev tamamlandığında bile sevinmek yerine 'Daha iyisi olabilirdi' diye düşünmeden edemiyorum.", correct: 1, options: [1, 9, 2], feedback: "Tip 1: Ulaşılamaz bir mükemmellik standardı nedeniyle sürekli bir içsel memnuniyetsizlik yaşarlar." },
+
+    // TİP 2
+    { text: "Başkalarının benden ne istediğini sezgisel olarak hissedebiliyor ama kendi ihtiyaçlarımı dile getirmekten utanıyorum.", correct: 2, options: [2, 5, 8], feedback: "Tip 2 (Yardımsever): Sevilmek için hizmet ederler, kendi ihtiyaçlarını bencillik olarak görürler." },
+    { text: "Eğer insanlar bana ihtiyaç duymazlarsa, kendi değerimi ve varlık sebebimi kaybedeceğimden korkuyorum.", correct: 2, options: [2, 3, 9], feedback: "Tip 2: İlişkilerde vazgeçilmez olarak kendi reddedilme korkularını bastırırlar." },
+    { text: "İnsanlara o kadar çok veriyorum ki, karşılık göremediğimde içten içe büyük bir öfke ve kırgınlık biriktiriyorum.", correct: 2, options: [2, 7, 4], feedback: "Tip 2: Gurur tuzakları yüzünden 'Benim hiçbir şeye ihtiyacım yok ama herkesin bana ihtiyacı var' yanılgısına düşerler." },
+
+    // TİP 3
+    { text: "Kendi gerçek duygularımı yaşamaktansa, toplumun benden beklediği 'başarı imajına' bürünmeyi tercih ederim.", correct: 3, options: [3, 4, 6], feedback: "Tip 3 (Başarı Odaklı): Başarı için kendi hislerini askıya alır ve ortama göre şekil alırlar (Buketleme)." },
+    { text: "Dinlenmek veya hiçbir şey yapmadan durmak bana inanılmaz suçluluk veriyor, sürekli üretmeliyim.", correct: 3, options: [3, 9, 7], feedback: "Tip 3: İnsan olarak değerlerinin 'ne kadar başarılı olduklarıyla' eşdeğer olduğuna inanırlar." },
+    { text: "Bazen o kadar çok 'Rol' yapıyorum ki, maskemi çıkardığımda asıl benliğimin kim olduğunu unutuyorum.", correct: 3, options: [3, 8, 5], feedback: "Tip 3: Hedeflere ve alkışa odaklanmaktan kendi öz benlikleriyle iletişimlerini yitirme riski taşırlar." },
+
+    // TİP 4
+    { text: "Hayatın sıradanlığı bana acı veriyor. Başkalarının sahip olduğu 'o eksik parçanın' bende olmadığına inanıyorum.", correct: 4, options: [4, 9, 2], feedback: "Tip 4 (Özgün): Melankoli ve haset üzerinden 'sıradan' mutluluğu küçümserler." },
+    { text: "Duygularım benim en yoğun gerçekliğimdir; kendimi anlaşılmaz, özel ve trajik bir yalnızlığın içinde bulabiliyorum.", correct: 4, options: [4, 8, 1], feedback: "Tip 4: Derin ve yoğun duygular hissederek hayatta olduklarına kanaat getirirler." },
+    { text: "Kurtarılmayı veya beni tam olarak anlayacak 'o büyülü insanı' beklerken mevcut hayatı kaçırıyorum.", correct: 4, options: [4, 7, 3], feedback: "Tip 4: İdealize edilmiş gelecekteki kurtarıcıya odaklanıp şimdinin değerini es geçerler." },
+
+    // TİP 5
+    { text: "Çevremdeki insanların talepleri enerjimi çabucak tüketiyor, bu yüzden kendi yalnız alanıma çekilirim.", correct: 5, options: [5, 2, 7], feedback: "Tip 5 (Gözlemci): Enerji kaynaklarının sınırlı olduğunu düşünüp kendilerini izole ederler." },
+    { text: "Aksiyon almadan önce konu hakkında her şeyi bilmek ve tüm verileri analiz etmek zorunda hissediyorum.", correct: 5, options: [5, 8, 3], feedback: "Tip 5: Yetersizlik korkularını, uzmanlaşarak ve her detayı mantığa oturtarak yok etmeye çalışırlar." },
+    { text: "Bir ortamda hislerime odaklanmak yerine, ortamı bir sistem gibi dışarıdan izlemeyi tercih ederim.", correct: 5, options: [5, 4, 9], feedback: "Tip 5: Duygusal olarak geri çekilip olayları salt entelektüel seviyede işlerler." },
+
+    // TİP 6
+    { text: "Herhangi bir karar vermeden önce olası tüm felaket senaryolarını düşünür, önlem almaya çalışırım.", correct: 6, options: [6, 1, 9], feedback: "Tip 6 (Sadık-Sorgulayıcı): Güvenlik arayışı içindedirler, belirsizlik onlara en büyük kaygıyı verir." },
+    { text: "Otorite figürlerine karşı hem çok sadık olabilir hem de onlardan şüphelenip gizli bir asi tavır takınabilirim.", correct: 6, options: [6, 3, 2], feedback: "Tip 6: Güvence için bağlanmakla korkularına meydan okumak arasında gidip gelirler." },
+    { text: "Bana çok iyi bir şey söylendiğinde bile arkasında yatan 'gizli bir niyet' olup olmadığını sorgularım.", correct: 6, options: [6, 7, 4], feedback: "Tip 6: Şüphecilikleri nedeniyle güven testlerinden geçirmeden kimseye tam teslim olmazlar." },
+
+    // TİP 7
+    { text: "Olumsuz duygulardan kaçmak için zihnimi sürekli fantastik planlar, seyahatler ve seçeneklerle doldururum.", correct: 7, options: [7, 5, 4], feedback: "Tip 7 (Maceracı): Acıdan ve can sıkıntısından kaçmak temel savunma mekanizmalarıdır." },
+    { text: "Bağlanmak ve bir şeyin sonunu getirmek benim için zordur çünkü diğer 'harika' seçenekleri kaçırmaktan korkarım.", correct: 7, options: [7, 1, 6], feedback: "Tip 7: FOMO (Kaçırma korkusu) yaşarlar ve sınırlandırılmaktan hiç hoşlanmazlar." },
+    { text: "Dünyaya büyük bir açgözlülükle yaklaşıyorum; her deneyimi yaşamak ve hiçbir sınır tanımamak istiyorum.", correct: 7, options: [7, 2, 9], feedback: "Tip 7: Hayatın acı gerçeklerinden yüz çevirip sadece 'oyun ve haz' vitrininde kalmak isterler." },
+
+    // TİP 8
+    { text: "Güçsüzlüğümü göstermek veya başkalarının kontrolü altına girmek benim için en büyük tehlikedir. Daima güçlü olmalıyım.", correct: 8, options: [8, 9, 2], feedback: "Tip 8 (Meydan Okuyan): Dünyayı adaletsiz olarak algılarlar, incinmemek için zırh (sertlik) giyerler." },
+    { text: "İnsanları test etmek ve gerçek yüzlerini görmek için bazen kasıtlı olarak çatışma çıkarır veya zorlarım.", correct: 8, options: [8, 5, 7], feedback: "Tip 8: İnsanların gerçek ve güvenilir olduğuna ancak kriz anındaki tavırlarına bakarak inanırlar." },
+    { text: "Adaletsizlik varsa inisiyatif alıp zayıfları korumaktan çekinmem; öfkem saman alevi gibi parlar ve biter.", correct: 8, options: [8, 1, 3], feedback: "Tip 8: Maske takmazlar, kendi adaletlerini uygularlar ve doğrudan eyleme geçerler." },
+
+    // TİP 9
+    { text: "Bir çatışmaya girmemek için kendi isteklerimi uyuşturup, başkalarının akışına göre yaşamaya çok alışkınım.", correct: 9, options: [9, 3, 8], feedback: "Tip 9 (Barışçı): Bağlantıyı kaybetmemek için kendilerini ve onaylanma ihtiyaçlarını yok sayarlar (Narkotizasyon)." },
+    { text: "Gerçekten öfkelensem de bunu doğrudan ifade etmek yerine inatçılaşır, sessizleşir veya işleri ağırdan alırım.", correct: 9, options: [9, 7, 2], feedback: "Tip 9: Pasif-agresif bir öfke tarzları vardır. Açık öfkenin ayrılık getireceğinden korkarlar." },
+    { text: "İş yapmak için potansiyelim var ama karar veremeyip rahat olan rutinime geri dönüyorum (Tembellik).", correct: 9, options: [9, 1, 4], feedback: "Tip 9: Ruhsal atalet halindedirler, kendi derin istekleriyle yüzleşmekten kaçınırlar." }
 ];
 
 let currentGameScore = 0;
@@ -1038,7 +1077,7 @@ function startGame() {
 function nextGameQuestion() {
     currentGameIndex++;
 
-    if (currentGameIndex >= gameQuestions.length) {
+    if (currentGameIndex >= 10 || currentGameIndex >= gameQuestions.length) {
         endGame();
         return;
     }
@@ -1119,3 +1158,120 @@ function endGame() {
 window.startGame = startGame;
 window.nextGameQuestion = nextGameQuestion;
 
+// --- ANALYTICS / DATA LOGGING (BACKGROUND) ---
+window.saveTestAnalytics = function (bestType, consistencyScore, typeScores, wing, tritype) {
+    try {
+        const userNameInput = document.getElementById('userName');
+        const userName = (userNameInput && userNameInput.value.trim() !== '') ? userNameInput.value : "Anonim";
+
+        const history = JSON.parse(localStorage.getItem('enneagram_analytics')) || [];
+        const record = {
+            id: Date.now(),
+            date: new Date().toISOString(),
+            userName: userName,
+            resultType: bestType,
+            wing: wing,
+            tritype: tritype,
+            consistency: consistencyScore,
+            scores: typeScores
+        };
+        history.push(record);
+        localStorage.setItem('enneagram_analytics', JSON.stringify(history));
+        console.log("Analytics: Kullanıcı verisi başarıyla loglandı.");
+    } catch (e) {
+        console.error("Analytics kaydedilemedi", e);
+    }
+};
+
+window.exportAnalyticsData = function () {
+    const dataStr = localStorage.getItem('enneagram_analytics');
+    if (!dataStr || dataStr === "[]") {
+        alert("Henüz kaydedilmiş test verisi yok. (Önce bir test çözmelisiniz)");
+        return;
+    }
+
+    try {
+        const data = JSON.parse(dataStr);
+        if (!data.length) return;
+
+        // UTF-8 BOM ile Excel'de Türkçe karakterler (Örn: Ş, Ğ, İ) düzgün görünsün
+        let csvContent = "\uFEFF";
+        csvContent += "Tarih,Kullanici Adi,Kişilik Tipi,Kanat,Tritype,Tutarlilik (Guvenilirlik)\n";
+
+        data.forEach(row => {
+            let uName = row.userName ? row.userName.replace(/,/g, "") : "Anonim";
+            let rType = row.resultType || "?";
+            let cScore = row.consistency || 0;
+            let wing = row.wing ? row.wing.replace(/,/g, " ") : "-";
+            let tritype = row.tritype ? row.tritype.replace(/,/g, " ") : "-";
+
+            // Tarihi temizle (Türkçe format)
+            let dateObj = new Date(row.date);
+            let dateStr = dateObj.toLocaleDateString('tr-TR') + " " + dateObj.toLocaleTimeString('tr-TR');
+
+            csvContent += `"${dateStr}","${uName}","Tip ${rType}","${wing}","${tritype}","% ${cScore}"\n`;
+        });
+
+        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Enneagram_Rapor_${new Date().getTime()}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+        console.log("Excel/CSV Raporu indirildi!");
+
+    } catch (e) {
+        alert("Veriler dışa aktarılırken bir hata oluştu.");
+        console.error(e);
+    }
+};
+
+// --- GİZLİ YÖNETİCİ MENÜSÜ ---
+let adminClickCount = 0;
+let adminClickTimer = null;
+
+window.adminClick = function () {
+    adminClickCount++;
+
+    if (adminClickCount === 1) {
+        adminClickTimer = setTimeout(() => { adminClickCount = 0; }, 3000);
+        // 3 saniye içinde 5 kez tıklanmazsa sıfırlanır
+    }
+
+    if (adminClickCount >= 5) {
+        clearTimeout(adminClickTimer);
+        adminClickCount = 0;
+        showAdminPanel();
+    }
+};
+
+function showAdminPanel() {
+    if (document.getElementById('adminPanel')) return; // Zaten açıksa çık
+
+    const panel = document.createElement('div');
+    panel.id = 'adminPanel';
+    panel.style.position = 'fixed';
+    panel.style.bottom = '20px';
+    panel.style.right = '20px'; // Sağ alt köşe
+    panel.style.background = 'rgba(15, 23, 42, 0.95)';
+    panel.style.border = '2px solid #4ade80';
+    panel.style.padding = '20px';
+    panel.style.borderRadius = '12px';
+    panel.style.zIndex = '99999';
+    panel.style.color = 'white';
+    panel.style.boxShadow = '0 10px 40px rgba(0,0,0,0.8)';
+    panel.style.backdropFilter = 'blur(10px)';
+
+    panel.innerHTML = `
+        <h3 style="margin:0 0 10px 0; color:#4ade80; font-family:'Outfit',sans-serif; text-align:center;">🕵️‍♂️ Gizli Yönetim</h3>
+        <p style="font-size:0.85rem; color:#94a3b8; margin-bottom:15px; text-align:center;">Test yapan kullanıcıların verilerini 'Excel' (CSV) tablosu olarak indirebilirsin.</p>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+            <button onclick="window.exportAnalyticsData()" style="padding:10px; background:#4ade80; color:#0f172a; border:none; border-radius:8px; cursor:pointer; font-weight:bold;">📥 Excel Olarak İndir (.CSV)</button>
+            <button onclick="localStorage.removeItem('enneagram_analytics'); alert('Tüm kullanıcı test verileri silindi!'); this.parentElement.parentElement.remove();" style="padding:10px; background:transparent; color:#ef4444; border:1px solid #ef4444; border-radius:8px; cursor:pointer; font-weight:bold;">🗑️ Verileri Sıfırla (Sil)</button>
+            <button onclick="this.parentElement.parentElement.remove()" style="padding:10px; background:rgba(255,255,255,0.1); color:#fff; border:none; border-radius:8px; cursor:pointer;">Kapat</button>
+        </div>
+    `;
+
+    document.body.appendChild(panel);
+}
